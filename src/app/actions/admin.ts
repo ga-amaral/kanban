@@ -27,7 +27,7 @@ export async function getUsers() {
 
         const { data, error } = await (supabase.from("profiles") as any)
             .select("*")
-            .order("created_at", { ascending: false })
+            .order("updated_at", { ascending: false })
 
         if (error) return { error: error.message }
         return { data }
