@@ -19,7 +19,7 @@ import { KanbanCard } from "./card"
 import { ListView } from "./list-view"
 import { CSVImporter } from "./csv-importer"
 import { moveCard } from "@/app/actions/card"
-import { createColumn } from "@/app/actions/column"
+import { createColumn, updateColumnOrder, updateColumn, deleteColumn } from "@/app/actions/column"
 import { toast, Toaster } from "sonner"
 import { refreshWorkspace } from "@/app/actions/workspace"
 import { RefreshCw, Plus, LayoutGrid, List, Upload } from "lucide-react"
@@ -37,6 +37,7 @@ export function KanbanBoard({
     const [columns, setColumns] = useState(initialColumns)
     const [cards, setCards] = useState(initialCards)
     const [activeCard, setActiveCard] = useState<any | null>(null)
+    const [activeColumn, setActiveColumn] = useState<any | null>(null)
     const [isRefreshing, setIsRefreshing] = useState(false)
     const [view, setView] = useState<"kanban" | "list">("kanban")
     const [importingTo, setImportingTo] = useState<string | null>(null)
@@ -109,10 +110,38 @@ export function KanbanBoard({
         }
     }
 
+    const handleColumnUpdate = async (columnId: string, data: any) => {
+        // Optimistic update
+        setColumns(prev => prev.map(c => c.id === columnId ? { ...c, ...data } : c))
+
+        try {
+            await updateColumn(workspaceId, columnId, data)
+        } catch (error) {
+            toast.error("Erro ao atualizar coluna.")
+            // Rollback could be added here
+        }
+    }
+
+    const handleColumnDelete = async (columnId: string) => {
+        // Optimistic update
+        setColumns(prev => prev.filter(c => c.id !== columnId))
+        setCards(prev => prev.filter(c => c.column_id !== columnId))
+
+        try {
+            await deleteColumn(workspaceId, columnId)
+            toast.success("Coluna excluída!")
+        } catch (error) {
+            toast.error("Erro ao excluir coluna.")
+            // Rollback could be added here
+        }
+    }
+
     // --- Handlers de Drag & Drop ---
     const handleDragStart = (event: DragStartEvent) => {
         if (event.active.data.current?.type === "Card") {
             setActiveCard(event.active.data.current.card)
+        } else if (event.active.data.current?.type === "Column") {
+            setActiveColumn(event.active.data.current.column)
         }
     }
 
@@ -152,8 +181,31 @@ export function KanbanBoard({
 
     const handleDragEnd = async (event: DragEndEvent) => {
         setActiveCard(null)
+        setActiveColumn(null)
         const { active, over } = event
         if (!over) return
+
+        if (active.data.current?.type === "Column") {
+            const activeId = active.id
+            const overId = over.id
+            if (activeId !== overId) {
+                setColumns(prev => {
+                    const activeIndex = prev.findIndex(c => c.id === activeId)
+                    const overIndex = prev.findIndex(c => c.id === overId)
+                    const newColumns = arrayMove(prev, activeIndex, overIndex)
+
+                    // Atualiza backend com a nova ordem
+                    const orderPayload = newColumns.map((col, index) => ({ id: col.id, order: index }))
+                    updateColumnOrder(workspaceId, orderPayload).catch(() => {
+                        toast.error("Erro ao atualizar ordem das colunas")
+                    })
+
+                    return newColumns
+                })
+            }
+            return
+        }
+
         const cardId = active.id as string
         const card = cards.find(c => c.id === cardId)
         if (card) {
@@ -246,6 +298,8 @@ export function KanbanBoard({
                                             onCardCreate={handleCardCreate}
                                             onCardUpdate={handleCardUpdate}
                                             onCardDelete={handleCardDelete}
+                                            onColumnUpdate={handleColumnUpdate}
+                                            onColumnDelete={handleColumnDelete}
                                         />
                                     ))}
                                 </LayoutGroup>
@@ -293,6 +347,21 @@ export function KanbanBoard({
                                         globalCustomFields={globalCustomFields}
                                         onUpdate={handleCardUpdate}
                                         onDelete={handleCardDelete}
+                                    />
+                                </div>
+                            ) : null}
+                            {activeColumn ? (
+                                <div className="scale-105 rotate-2">
+                                    <KanbanColumn
+                                        column={activeColumn}
+                                        cards={cards.filter(c => c.column_id === activeColumn.id)}
+                                        workspaceId={workspaceId}
+                                        globalCustomFields={globalCustomFields}
+                                        onCardCreate={handleCardCreate}
+                                        onCardUpdate={handleCardUpdate}
+                                        onCardDelete={handleCardDelete}
+                                        onColumnUpdate={handleColumnUpdate}
+                                        onColumnDelete={handleColumnDelete}
                                     />
                                 </div>
                             ) : null}

@@ -40,3 +40,27 @@ export async function updateColumnOrder(workspaceId: string, columns: { id: stri
 
     revalidatePath(`/workspace/${workspaceId}`)
 }
+
+export async function updateColumn(workspaceId: string, columnId: string, data: { title?: string, color?: string }) {
+    const supabase = createClient() as any
+    const { error } = await supabase
+        .from("columns")
+        .update(data)
+        .eq("id", columnId)
+
+    if (error) return { error: error.message }
+    revalidatePath(`/workspace/${workspaceId}`)
+    return { success: true }
+}
+
+export async function deleteColumn(workspaceId: string, columnId: string) {
+    const supabase = createClient() as any
+    const { error } = await supabase
+        .from("columns")
+        .delete()
+        .eq("id", columnId)
+
+    if (error) return { error: error.message }
+    revalidatePath(`/workspace/${workspaceId}`)
+    return { success: true }
+}

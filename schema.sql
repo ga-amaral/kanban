@@ -24,6 +24,7 @@ CREATE TABLE public.columns (
     workspace_id UUID REFERENCES public.workspaces(id) ON DELETE CASCADE NOT NULL,
     title TEXT NOT NULL,
     "order" INTEGER NOT NULL,
+    color TEXT DEFAULT '#6366f1',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
