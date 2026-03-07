@@ -9,6 +9,8 @@ CREATE TABLE public.profiles (
     email TEXT NOT NULL,
     full_name TEXT,
     avatar_url TEXT,
+    role TEXT DEFAULT 'user',
+    status TEXT DEFAULT 'active',
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

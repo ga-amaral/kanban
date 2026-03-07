@@ -50,11 +50,41 @@ export async function updateSession(request: NextRequest) {
             return NextResponse.redirect(url)
         }
 
-        // Redirecionar se logado e tentar acessar /login
-        if (user && request.nextUrl.pathname.startsWith('/login')) {
-            const url = request.nextUrl.clone()
-            url.pathname = '/'
-            return NextResponse.redirect(url)
+        // Se logado, checar role e status
+        if (user) {
+            // Pegar profile
+            const { data: profile } = await (supabase.from('profiles') as any)
+                .select('role, status')
+                .eq('id', user.id)
+                .single()
+
+            // Bloquear usuário
+            if (profile?.status === 'blocked' && !request.nextUrl.pathname.startsWith('/blocked')) {
+                const url = request.nextUrl.clone()
+                url.pathname = '/blocked'
+                return NextResponse.redirect(url)
+            }
+
+            // Proteger rota /admin
+            if (request.nextUrl.pathname.startsWith('/admin') && profile?.role !== 'admin') {
+                const url = request.nextUrl.clone()
+                url.pathname = '/'
+                return NextResponse.redirect(url)
+            }
+
+            // Redirecionar se logado e tentar acessar /login
+            if (request.nextUrl.pathname.startsWith('/login')) {
+                const url = request.nextUrl.clone()
+                url.pathname = '/'
+                return NextResponse.redirect(url)
+            }
+
+            // Redirecionar para inicio se estiver em /blocked mas não for blocked
+            if (request.nextUrl.pathname.startsWith('/blocked') && profile?.status !== 'blocked') {
+                const url = request.nextUrl.clone()
+                url.pathname = '/'
+                return NextResponse.redirect(url)
+            }
         }
 
         return supabaseResponse
