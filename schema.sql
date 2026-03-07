@@ -58,22 +58,31 @@ ALTER TABLE public.columns ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cards ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.automations ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users can view their own profiles" ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users can update their own profiles" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE id = auth.uid() AND role = 'admin'
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+CREATE POLICY "Users can view their own profiles" ON public.profiles FOR SELECT USING (auth.uid() = id OR public.is_admin());
+CREATE POLICY "Users can update their own profiles" ON public.profiles FOR UPDATE USING (auth.uid() = id OR public.is_admin());
 
 CREATE POLICY "Users can manage their own workspaces" ON public.workspaces FOR ALL USING (
-    auth.uid() = owner_id OR 
-    (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin'
+    auth.uid() = owner_id OR public.is_admin()
 );
 
 CREATE POLICY "Users can manage columns in their workspaces" ON public.columns FOR ALL USING (
-    workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid() OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+    workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid() OR public.is_admin())
 );
 
 CREATE POLICY "Users can manage cards in their workspaces" ON public.cards FOR ALL USING (
-    workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid() OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+    workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid() OR public.is_admin())
 );
 
 CREATE POLICY "Users can manage automations in their workspaces" ON public.automations FOR ALL USING (
-    workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid() OR (SELECT role FROM public.profiles WHERE id = auth.uid()) = 'admin')
+    workspace_id IN (SELECT id FROM public.workspaces WHERE owner_id = auth.uid() OR public.is_admin())
 );

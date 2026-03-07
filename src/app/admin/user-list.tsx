@@ -35,6 +35,7 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                     const isSelf = u.id === currentUserId
                     const isAdmin = u.role === "admin"
                     const isBlocked = u.status === "blocked"
+                    const isSuperAdmin = u.email === "amaralgabriel123@gmail.com" || u.email === "amaralgabriel4321@gmail.com"
 
                     return (
                         <div key={u.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-800/20 transition-colors">
@@ -86,15 +87,20 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                                     </Link>
                                 )}
 
-                                {isSelf ? (
+                                {isSuperAdmin ? (
+                                    <span className="text-xs text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20 flex items-center gap-1.5 cursor-not-allowed mx-auto" title="Master Admin Protegido">
+                                        <ShieldCheck className="h-3 w-3" />
+                                        Protegido
+                                    </span>
+                                ) : isSelf ? (
                                     <span className="text-xs text-slate-600 font-medium">Conta Atual</span>
                                 ) : (
                                     <button
                                         onClick={() => handleStatusChange(u.id, isBlocked ? "active" : "blocked")}
                                         disabled={loadingId === u.id}
                                         className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${isBlocked
-                                                ? "bg-slate-800 hover:bg-slate-700 text-slate-300"
-                                                : "bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20"
+                                            ? "bg-slate-800 hover:bg-slate-700 text-slate-300"
+                                            : "bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20"
                                             }`}
                                     >
                                         {loadingId === u.id ? (

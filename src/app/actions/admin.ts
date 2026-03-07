@@ -46,6 +46,15 @@ export async function updateUserStatus(userId: string, newStatus: "active" | "bl
             return { error: "Você não pode alterar seu próprio status." }
         }
 
+        const { data: targetProfile } = await (supabase.from("profiles") as any)
+            .select("email")
+            .eq("id", userId)
+            .single()
+
+        if (targetProfile?.email === "amaralgabriel123@gmail.com" || targetProfile?.email === "amaralgabriel4321@gmail.com") {
+            return { error: "Este usuário de sistema é protegido e não pode ser alterado." }
+        }
+
         const { error } = await (supabase.from("profiles") as any)
             .update({ status: newStatus })
             .eq("id", userId)
