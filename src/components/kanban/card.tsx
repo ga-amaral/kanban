@@ -10,11 +10,13 @@ import { toast } from "sonner"
 export function KanbanCard({
     card,
     workspaceId,
+    globalCustomFields,
     onUpdate,
     onDelete
 }: {
     card: any,
     workspaceId: string,
+    globalCustomFields: string[],
     onUpdate: (card: any) => void,
     onDelete: (id: string) => void
 }) {
@@ -28,16 +30,25 @@ export function KanbanCard({
 
     // Ao abrir o modal de edição, preencher os campos customizados
     useEffect(() => {
-        if (isEditing && card.custom_data_jsonb) {
-            const fields = Object.entries(card.custom_data_jsonb).map(([key, value]) => ({
+        if (isEditing) {
+            const currentData = card.custom_data_jsonb || {}
+
+            // Garantir que todas as chaves globais apareçam
+            const allKeys = Array.from(new Set([
+                ...globalCustomFields,
+                ...Object.keys(currentData)
+            ]))
+
+            const fields = allKeys.map(key => ({
                 key,
-                value: String(value)
+                value: currentData[key] ? String(currentData[key]) : ""
             }))
+
             setEditCustomFields(fields)
-        } else if (isEditing) {
+        } else {
             setEditCustomFields([])
         }
-    }, [isEditing, card.custom_data_jsonb])
+    }, [isEditing, card.custom_data_jsonb, globalCustomFields])
 
     const {
         attributes,

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import {
     DndContext,
     DragOverlay,
@@ -165,6 +165,16 @@ export function KanbanBoard({
         }
     }
 
+    const globalCustomFields = useMemo(() => {
+        const keys = new Set<string>()
+        cards.forEach(c => {
+            if (c.custom_data_jsonb) {
+                Object.keys(c.custom_data_jsonb).forEach(k => keys.add(k))
+            }
+        })
+        return Array.from(keys)
+    }, [cards])
+
     return (
         <div className="flex flex-col h-full w-full space-y-6">
             <Toaster position="top-right" theme="dark" richColors />
@@ -232,6 +242,7 @@ export function KanbanBoard({
                                             column={column}
                                             cards={cards.filter(c => c.column_id === column.id)}
                                             workspaceId={workspaceId}
+                                            globalCustomFields={globalCustomFields}
                                             onCardCreate={handleCardCreate}
                                             onCardUpdate={handleCardUpdate}
                                             onCardDelete={handleCardDelete}
@@ -279,6 +290,7 @@ export function KanbanBoard({
                                     <KanbanCard
                                         card={activeCard}
                                         workspaceId={workspaceId}
+                                        globalCustomFields={globalCustomFields}
                                         onUpdate={handleCardUpdate}
                                         onDelete={handleCardDelete}
                                     />

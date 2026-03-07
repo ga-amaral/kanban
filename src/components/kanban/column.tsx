@@ -12,6 +12,7 @@ export function KanbanColumn({
     column,
     cards,
     workspaceId,
+    globalCustomFields,
     onCardCreate,
     onCardUpdate,
     onCardDelete
@@ -19,6 +20,7 @@ export function KanbanColumn({
     column: any,
     cards: any[],
     workspaceId: string,
+    globalCustomFields: string[],
     onCardCreate: (card: any) => void,
     onCardUpdate: (card: any) => void,
     onCardDelete: (id: string) => void
@@ -88,6 +90,7 @@ export function KanbanColumn({
                             key={card.id}
                             card={card}
                             workspaceId={workspaceId}
+                            globalCustomFields={globalCustomFields}
                             onUpdate={onCardUpdate}
                             onDelete={onCardDelete}
                         />
@@ -150,7 +153,10 @@ export function KanbanColumn({
 
                 {!isAddingCard && (
                     <button
-                        onClick={() => setIsAddingCard(true)}
+                        onClick={() => {
+                            setCustomFields(globalCustomFields.map(key => ({ key, value: "" })))
+                            setIsAddingCard(true)
+                        }}
                         className="w-full py-3 bg-slate-900/20 border border-dashed border-slate-800 hover:border-slate-700 rounded-2xl flex items-center justify-center gap-2 text-slate-500 text-xs"
                     >
                         <Plus className="h-3 w-3" />
