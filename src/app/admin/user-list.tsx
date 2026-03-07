@@ -2,8 +2,9 @@
 
 import { useState } from "react"
 import { updateUserStatus } from "@/app/actions/admin"
-import { Shield, ShieldAlert, User, ShieldCheck, Loader2, Slash } from "lucide-react"
+import { Shield, ShieldAlert, User, ShieldCheck, Loader2, Slash, Eye } from "lucide-react"
 import { toast } from "sonner"
+import Link from "next/link"
 
 export function AdminUserList({ users, currentUserId }: { users: any[], currentUserId: string }) {
     const [loadingId, setLoadingId] = useState<string | null>(null)
@@ -24,9 +25,9 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
         <div className="w-full">
             <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-slate-900/80 border-b border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-widest">
                 <div className="col-span-5 sm:col-span-4">Usuário</div>
-                <div className="col-span-4 sm:col-span-4 hidden sm:block">Email</div>
+                <div className="col-span-3 sm:col-span-3 hidden sm:block">Email</div>
                 <div className="col-span-3 sm:col-span-2 text-center">Status</div>
-                <div className="col-span-4 sm:col-span-2 text-right">Ação</div>
+                <div className="col-span-4 sm:col-span-3 text-right text-xs">Ações</div>
             </div>
 
             <div className="divide-y divide-slate-800/50">
@@ -50,14 +51,14 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                                 </div>
                             </div>
 
-                            <div className="col-span-4 sm:col-span-4 hidden sm:flex items-center text-sm text-slate-300 truncate">
+                            <div className="col-span-3 sm:col-span-3 hidden sm:flex items-center text-sm text-slate-300 truncate">
                                 {u.email}
                             </div>
 
                             <div className="col-span-3 sm:col-span-2 flex items-center justify-center">
                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${isBlocked
-                                        ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
-                                        : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
+                                    ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                    : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                                     }`}>
                                     {isBlocked ? (
                                         <>
@@ -73,14 +74,25 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                                 </span>
                             </div>
 
-                            <div className="col-span-4 sm:col-span-2 flex items-center justify-end">
+                            <div className="col-span-4 sm:col-span-3 flex items-center justify-end gap-2">
+                                {!isSelf && (
+                                    <Link
+                                        href={`/admin/user/${u.id}`}
+                                        className="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 transition-all flex items-center gap-1.5"
+                                        title="Visualizar Quadros do Usuário"
+                                    >
+                                        <Eye className="h-3 w-3" />
+                                        <span className="hidden xl:inline">Monitorar</span>
+                                    </Link>
+                                )}
+
                                 {isSelf ? (
                                     <span className="text-xs text-slate-600 font-medium">Conta Atual</span>
                                 ) : (
                                     <button
                                         onClick={() => handleStatusChange(u.id, isBlocked ? "active" : "blocked")}
                                         disabled={loadingId === u.id}
-                                        className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${isBlocked
+                                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${isBlocked
                                                 ? "bg-slate-800 hover:bg-slate-700 text-slate-300"
                                                 : "bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20"
                                             }`}
@@ -94,7 +106,7 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                                         ) : (
                                             <>
                                                 <Slash className="h-3 w-3" />
-                                                Bloquear
+                                                <span className="hidden lg:inline">Bloquear</span>
                                             </>
                                         )}
                                     </button>
