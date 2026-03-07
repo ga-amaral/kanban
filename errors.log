@@ -1,0 +1,17 @@
+﻿src/app/actions/column.ts(10,10): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "columns", never, "POST">', gave the following error.
+    Argument of type '{ workspace_id: string; title: string; order_index: number; }[]' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "columns", never, "POST">', gave the following error.
+    Type '{ workspace_id: string; title: string; order_index: number; }' is not assignable to type 'never'.
+src/app/actions/column.ts(38,21): error TS2345: Argument of type '{ order_index: number; }' is not assignable to parameter of type 'never'.
+src/app/actions/webhook.ts(29,17): error TS2345: Argument of type '{ webhook_config: any; }' is not assignable to parameter of type 'never'.
+src/app/actions/workspace.ts(26,10): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(values: never, options?: { count?: "exact" | "planned" | "estimated" | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "workspaces", never, "POST">', gave the following error.
+    Argument of type '{ name: string; owner_id: string; }[]' is not assignable to parameter of type 'never'.
+  Overload 2 of 2, '(values: never[], options?: { count?: "exact" | "planned" | "estimated" | undefined; defaultToNull?: boolean | undefined; } | undefined): PostgrestFilterBuilder<{ PostgrestVersion: "12"; }, never, never, null, "workspaces", never, "POST">', gave the following error.
+    Type '{ name: string; owner_id: string; }' is not assignable to type 'never'.
+src/app/actions/workspace.ts(51,17): error TS2345: Argument of type '{ name: string; }' is not assignable to parameter of type 'never'.
+src/app/page.tsx(47,52): error TS2339: Property 'id' does not exist on type 'never'.
+src/app/page.tsx(48,67): error TS2339: Property 'id' does not exist on type 'never'.
+src/app/page.tsx(55,52): error TS2339: Property 'name' does not exist on type 'never'.
+src/app/page.tsx(59,71): error TS2339: Property 'created_at' does not exist on type 'never'.
