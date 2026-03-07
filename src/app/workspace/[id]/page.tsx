@@ -7,6 +7,7 @@ import { Kanban, ChevronLeft, Settings, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { AutomationManager } from "@/components/automation-manager"
+import { WorkspaceSettings } from "@/components/workspace/settings"
 
 export default async function WorkspacePage({
     params,
@@ -59,6 +60,12 @@ export default async function WorkspacePage({
                                     Quadro
                                 </Link>
                                 <Link
+                                    href={`/workspace/${params.id}?tab=automations`}
+                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'automations' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                >
+                                    Automações
+                                </Link>
+                                <Link
                                     href={`/workspace/${params.id}?tab=settings`}
                                     className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
                                 >
@@ -76,18 +83,24 @@ export default async function WorkspacePage({
 
             {/* Content */}
             <main className="flex-1 overflow-auto bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]">
-                {activeTab === "kanban" ? (
+                {activeTab === "kanban" && (
                     <KanbanBoard
                         workspaceId={params.id}
                         initialColumns={columns}
                         initialCards={cards}
                     />
-                ) : (
+                )}
+                {activeTab === "automations" && (
                     <div className="max-w-6xl mx-auto px-6 py-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
                         <AutomationManager
                             workspaceId={params.id}
                             columns={columns}
                         />
+                    </div>
+                )}
+                {activeTab === "settings" && (
+                    <div className="max-w-6xl mx-auto px-6">
+                        <WorkspaceSettings workspace={workspace} />
                     </div>
                 )}
             </main>
