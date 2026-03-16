@@ -209,8 +209,17 @@ export async function bulkCreateCards(workspaceId: string, cards: any[]) {
         .select()
 
     if (error) return { error: error.message }
+    
+    // Mapear campos para o frontend
+    const mappedData = data.map((card: any) => ({
+        ...card,
+        contact_name: card.client_name,
+        contact_phone: card.phone,
+        due_date: card.deadline_date
+    }))
+
     revalidatePath(`/workspace/${workspaceId}`)
-    return { data }
+    return { data: mappedData }
 }
 
 export async function bulkMoveCards(workspaceId: string, cardIds: string[], toColumnId: string) {
@@ -262,8 +271,16 @@ export async function bulkMoveCards(workspaceId: string, cardIds: string[], toCo
         }
     }
 
+    // Mapear para o frontend nos dados de retorno
+    const mappedMoveResult = moveResult?.map((card: any) => ({
+        ...card,
+        contact_name: card.client_name,
+        contact_phone: card.phone,
+        due_date: card.deadline_date
+    }))
+
     revalidatePath(`/workspace/${workspaceId}`)
-    return { data: moveResult }
+    return { data: mappedMoveResult }
 }
 
 export async function bulkDeleteCards(workspaceId: string, cardIds: string[]) {

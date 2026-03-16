@@ -29,8 +29,8 @@ export function ListView({
     const [showBulkMove, setShowBulkMove] = useState(false)
 
     const filteredCards = cards.filter(c =>
-        c.contact_name.toLowerCase().includes(search.toLowerCase()) ||
-        c.contact_phone.includes(search)
+        (c.contact_name || "").toLowerCase().includes((search || "").toLowerCase()) ||
+        (c.contact_phone || "").includes(search)
     )
 
     const toggleSelect = (id: string) => {
@@ -136,10 +136,10 @@ export function ListView({
                                     </td>
                                     <td className="p-5">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-slate-400 text-xs">
-                                                {card.contact_name[0]}
+                                            <div className="w-8 h-8 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-slate-400 text-xs text-center">
+                                                {(card.contact_name || "C")[0]}
                                             </div>
-                                            <span className="text-sm font-bold text-white font-outfit">{card.contact_name}</span>
+                                            <span className="text-sm font-bold text-white font-outfit">{card.contact_name || "Sem Nome"}</span>
                                         </div>
                                     </td>
                                     <td className="p-5">
