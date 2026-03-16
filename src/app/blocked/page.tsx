@@ -7,48 +7,49 @@ export default async function BlockedPage() {
     const { data: { user } } = await supabase.auth.getUser()
 
     return (
-        <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden">
             {/* Background elements */}
-            <div className="absolute top-[20%] right-[10%] w-96 h-96 bg-rose-600/10 blur-[100px] rounded-full" />
-            <div className="absolute bottom-[20%] left-[10%] w-96 h-96 bg-red-900/10 blur-[100px] rounded-full" />
+            <div className="absolute top-[20%] right-[10%] w-96 h-96 bg-signal-orange/10 blur-[120px] rounded-full animate-pulse" />
+            <div className="absolute bottom-[20%] left-[10%] w-96 h-96 bg-carbon/50 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
 
-            <div className="max-w-md w-full z-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-rose-900/50 p-10 rounded-[40px] shadow-2xl text-center relative overflow-hidden">
+            <div className="max-w-md w-full z-10">
+                <div className="bg-carbon border border-white/5 p-12 sharp-edge shadow-2xl text-center relative overflow-hidden group">
                     {/* Security Lines Pattern */}
-                    <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(225, 29, 72, 0.1) 10px, rgba(225, 29, 72, 0.1) 20px)' }}></div>
+                    <div className="absolute inset-0 opacity-5 pointer-events-none group-hover:opacity-10 transition-opacity" style={{ backgroundImage: 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(225, 29, 72, 0.1) 10px, rgba(225, 29, 72, 0.1) 20px)' }}></div>
+                    <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-signal-orange/30 to-transparent" />
 
-                    <div className="w-24 h-24 bg-rose-500/10 rounded-[28px] flex items-center justify-center mx-auto mb-8 border border-rose-500/20 shadow-[0_0_40px_rgba(225,29,72,0.2)]">
-                        <ShieldX className="h-12 w-12 text-rose-500 animate-pulse" />
+                    <div className="w-24 h-24 bg-signal-orange/10 sharp-edge flex items-center justify-center mx-auto mb-10 border border-signal-orange/20 shadow-[0_0_40px_rgba(249,115,22,0.1)]">
+                        <ShieldX className="h-12 w-12 text-signal-orange animate-pulse" />
                     </div>
 
-                    <h1 className="text-3xl font-bold text-white font-outfit mb-4">
-                        Acesso Restrito
+                    <h1 className="text-3xl font-black text-white font-outfit mb-3 uppercase tracking-tighter">
+                        Acesso Interrompido
                     </h1>
 
-                    <div className="bg-slate-950/50 border border-slate-800 p-4 rounded-2xl mb-8 space-y-2">
-                        <div className="flex items-start gap-3">
-                            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-                            <p className="text-sm text-slate-300 text-left leading-relaxed">
-                                Sua conta <b>{user?.email}</b> foi bloqueada por um administrador da plataforma. Você não tem permissão para acessar o sistema no momento.
+                    <div className="bg-black/40 border border-white/5 p-6 sharp-edge mb-10 space-y-2">
+                        <div className="flex flex-col items-center gap-4">
+                            <AlertTriangle className="h-6 w-6 text-signal-orange shrink-0 animate-bounce" />
+                            <p className="text-[11px] text-slate-400 font-bold uppercase tracking-tight leading-relaxed">
+                                Sua unidade de acesso <b>{user?.email}</b> foi suspensa pelos protocolos de segurança da plataforma.
                             </p>
                         </div>
                     </div>
 
-                    <p className="text-xs text-slate-500 mb-8 border-t border-slate-800/50 pt-6">
-                        Se você acredita que isso foi um engano ou precisa de acesso, por favor entre em contato com o suporte ou gestor responsável.
+                    <p className="text-[10px] text-slate-600 font-black uppercase tracking-widest mb-10 border-t border-white/5 pt-8">
+                        Contate a central de suporte para revisão de credenciais.
                     </p>
 
                     <form action="/auth/signout" method="post">
-                        <button className="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg flex items-center justify-center gap-2">
-                            <ArrowLeft className="h-5 w-5" />
-                            Sair da Conta
+                        <button className="w-full bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-[0.2em] py-5 sharp-edge transition-all shadow-lg flex items-center justify-center gap-3 text-xs">
+                            <ArrowLeft className="h-4 w-4" />
+                            Encerrar Sessão
                         </button>
                     </form>
                 </div>
             </div>
 
-            <p className="absolute bottom-6 text-[10px] text-slate-600">
-                AutoKanban CRM Security System
+            <p className="absolute bottom-8 text-[9px] text-white/10 font-black uppercase tracking-[0.3em]">
+                AutoKanban CRM // Security Layer 01
             </p>
         </div>
     )

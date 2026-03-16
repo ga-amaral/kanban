@@ -3,100 +3,115 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
+/**
+ * Gabriel Amaral (https://instagram.com/sougabrielamaral)
+ * Atualizado para refletir o schema real (client_name, phone, deadline_date)
+ */
+
 export async function createCard(workspaceId: string, columnId: string, cardData: any) {
     const supabase = createClient() as any
     const { data, error } = await supabase
         .from("cards")
         .insert([{
-            workspace_id: workspaceId,
             column_id: columnId,
-            contact_name: cardData.contact_name,
-            contact_phone: cardData.contact_phone,
-            due_date: cardData.due_date,
-            custom_data_jsonb: cardData.custom_data || {}
+            title: cardData.title || cardData.contact_name, // Suporte para ambos os campos durante a transição
+            client_name: cardData.client_name || cardData.contact_name,
+            phone: cardData.phone || cardData.contact_phone,
+            deadline_date: cardData.deadline_date || cardData.due_date,
+            order_index: cardData.order_index || 0,
+            description: cardData.description || ""
         }])
         .select()
         .single()
 
     if (error) return { error: error.message }
+    // Nota: O schema real não tem workspace_id na tabela cards, mas sim colunas -> boards.
+    // Dependendo de como a UI está estruturada, precisamos revalidar o path correto.
     revalidatePath(`/workspace/${workspaceId}`)
     return { data }
 }
 
-export async function getCards(workspaceId: string) {
-    const supabase = createClient()
+export async function getCards(columnId: string) {
+    const supabase = createClient() as any
     const { data, error } = await supabase
         .from("cards")
         .select("*")
-        .eq("workspace_id", workspaceId)
+        .eq("column_id", columnId)
+        .order("order_index", { ascending: true })
 
     if (error) return []
     return data
 }
 
 const resolveInternalValue = (card: any, columnTitle: string, internalKey: string) => {
-    if (internalKey === 'contact_name') return card.contact_name
-    if (internalKey === 'contact_phone') return card.contact_phone
-    if (internalKey === 'due_date') return card.due_date
+    if (internalKey === 'client_name' || internalKey === 'contact_name') return card.client_name
+    if (internalKey === 'phone' || internalKey === 'contact_phone') return card.phone
+    if (internalKey === 'deadline_date' || internalKey === 'due_date') return card.deadline_date
     if (internalKey === 'column_title') return columnTitle
+    if (internalKey === 'title') return card.title
 
-    // Se não for um campo padrão, busca no custom_data_jsonb
-    return card.custom_data_jsonb?.[internalKey] || ""
+    return card[internalKey] || ""
 }
 
-export async function moveCard(workspaceId: string, cardId: string, columnId: string) {
+export async function moveCard(workspaceId: string, cardId: string, columnId: string, newOrderIndex?: number) {
     const supabase = createClient() as any
 
     // Buscar card atual para verificar se mudou de coluna
     const { data: oldCard } = await supabase
         .from("cards")
-        .select("column_id, contact_name, contact_phone, due_date, custom_data_jsonb")
+        .select("*")
         .eq("id", cardId)
         .single()
 
-    if (oldCard && oldCard.column_id !== columnId) {
+    if (oldCard) {
+        const updatePayload: any = { column_id: columnId }
+        if (typeof newOrderIndex === 'number') {
+            updatePayload.order_index = newOrderIndex
+        }
+
         const { error } = await supabase
             .from("cards")
-            .update({ column_id: columnId })
+            .update(updatePayload)
             .eq("id", cardId)
 
         if (error) return { error: error.message }
 
-        // Disparar Automações (Múltiplas)
-        const { data: automations } = await supabase
-            .from("automations")
-            .select("*")
-            .eq("workspace_id", workspaceId)
-            .eq("is_active", true)
+        // Disparar Automações se mudou de coluna
+        if (oldCard.column_id !== columnId) {
+            const { data: automations } = await supabase
+                .from("automations")
+                .select("*")
+                .eq("workspace_id", workspaceId)
+                .eq("is_active", true)
 
-        if (automations && automations.length > 0) {
-            const { data: column } = await supabase
-                .from("columns")
-                .select("title")
-                .eq("id", columnId)
-                .single()
+            if (automations && automations.length > 0) {
+                const { data: column } = await supabase
+                    .from("columns")
+                    .select("title")
+                    .eq("id", columnId)
+                    .single()
 
-            for (const automation of automations) {
-                const trigger = automation.trigger_config as any
-                const config = automation.action_config as any
+                for (const automation of automations) {
+                    const trigger = automation.trigger_config as any
+                    const config = automation.action_config as any
 
-                // Verificar se o gatilho bate com a movimentação
-                const matchesTo = trigger.to_column_id === columnId
-                const matchesFrom = !trigger.from_column_id || trigger.from_column_id === oldCard.column_id
+                    const matchesTo = trigger.to_column_id === columnId
+                    const matchesFrom = !trigger.from_column_id || trigger.from_column_id === oldCard.column_id
 
-                if (trigger.type === 'column_move' && matchesTo && matchesFrom) {
-                    const payload: any = {}
-                    if (config.mappings) {
-                        config.mappings.forEach((m: any) => {
-                            payload[m.external] = resolveInternalValue(oldCard, column?.title || "", m.internal)
-                        })
+                    if (trigger.type === 'column_move' && matchesTo && matchesFrom) {
+                        const payload: any = {}
+                        if (config.mappings) {
+                            config.mappings.forEach((m: any) => {
+                                payload[m.external] = resolveInternalValue(oldCard, column?.title || "", m.internal)
+                            })
+                        }
+
+                        fetch(config.url, {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify(payload)
+                        }).catch(e => console.error(`Automation ${automation.name} failed:`, e))
                     }
-
-                    fetch(config.url, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(payload)
-                    }).catch(e => console.error(`Automation ${automation.name} failed:`, e))
                 }
             }
         }
@@ -113,10 +128,12 @@ export async function updateCard(workspaceId: string, cardId: string, updateData
     const { data, error } = await supabase
         .from("cards")
         .update({
-            contact_name: updateData.contact_name,
-            contact_phone: updateData.contact_phone,
-            due_date: updateData.due_date,
-            custom_data_jsonb: updateData.custom_data
+            title: updateData.title,
+            client_name: updateData.client_name || updateData.contact_name,
+            phone: updateData.phone || updateData.contact_phone,
+            deadline_date: updateData.deadline_date || updateData.due_date,
+            description: updateData.description,
+            urgency_level: updateData.urgency_level
         })
         .eq("id", cardId)
         .select()
@@ -145,7 +162,7 @@ export async function bulkCreateCards(workspaceId: string, cards: any[]) {
         .from("cards")
         .insert(cards.map(c => ({
             ...c,
-            workspace_id: workspaceId
+            // Removendo workspace_id se não existir na tabela
         })))
         .select()
 
@@ -177,7 +194,6 @@ export async function bulkMoveCards(workspaceId: string, cardIds: string[], toCo
         .eq("is_active", true)
 
     if (automations && automations.length > 0) {
-        // Disparar automações para cada card
         for (const id of cardIds) {
             const { data: card } = await supabase.from("cards").select("*").eq("id", id).single()
             if (card) {

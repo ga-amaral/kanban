@@ -23,11 +23,11 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
 
     return (
         <div className="w-full">
-            <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-slate-900/80 border-b border-slate-800 text-xs font-bold text-slate-400 uppercase tracking-widest">
+            <div className="grid grid-cols-12 gap-4 px-6 py-5 bg-black/40 border-b border-white/5 text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
                 <div className="col-span-5 sm:col-span-4">Usuário</div>
                 <div className="col-span-3 sm:col-span-3 hidden sm:block">Email</div>
                 <div className="col-span-3 sm:col-span-2 text-center">Status</div>
-                <div className="col-span-4 sm:col-span-3 text-right text-xs">Ações</div>
+                <div className="col-span-4 sm:col-span-3 text-right">Ações</div>
             </div>
 
             <div className="divide-y divide-slate-800/50">
@@ -38,15 +38,15 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                     const isSuperAdmin = u.email === "amaralgabriel123@gmail.com" || u.email === "amaralgabriel4321@gmail.com"
 
                     return (
-                        <div key={u.id} className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-800/20 transition-colors">
+                        <div key={u.id} className="grid grid-cols-12 gap-4 px-6 py-5 items-center hover:bg-white/[0.02] transition-colors border-b border-white/[0.02] last:border-0">
                             <div className="col-span-5 sm:col-span-4 flex items-center gap-3">
-                                <div className={`flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center ${isAdmin ? "bg-indigo-500/20 text-indigo-400 border border-indigo-500/30" : "bg-slate-800 text-slate-400 border border-slate-700"} `}>
+                                <div className={`flex-shrink-0 h-10 w-10 sharp-edge flex items-center justify-center transition-all ${isAdmin ? "bg-neon-green/10 text-neon-green border border-neon-green/30 neon-glow" : "bg-white/5 text-slate-500 border border-white/5"} `}>
                                     {isAdmin ? <Shield className="h-5 w-5" /> : <User className="h-5 w-5" />}
                                 </div>
                                 <div className="truncate">
-                                    <div className="text-sm font-semibold text-white flex items-center gap-2">
+                                    <div className="text-sm font-black text-white flex items-center gap-2 uppercase tracking-tight">
                                         <span className="truncate">{u.full_name || "Sem Nome"}</span>
-                                        {isSelf && <span className="text-[10px] bg-indigo-500 text-white px-2 py-0.5 rounded-full font-bold ml-1">Você</span>}
+                                        {isSelf && <span className="text-[10px] bg-neon-green text-black px-2 py-0.5 sharp-edge font-black ml-1">VOCÊ</span>}
                                     </div>
                                     <div className="text-xs text-slate-500 sm:hidden truncate">{u.email}</div>
                                 </div>
@@ -57,8 +57,8 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                             </div>
 
                             <div className="col-span-3 sm:col-span-2 flex items-center justify-center">
-                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${isBlocked
-                                    ? "bg-rose-500/10 text-rose-500 border border-rose-500/20"
+                                <span className={`inline-flex items-center gap-1.5 px-3 py-1 sharp-edge text-[10px] font-black uppercase tracking-widest ${isBlocked
+                                    ? "bg-signal-orange/10 text-signal-orange border border-signal-orange/20"
                                     : "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
                                     }`}>
                                     {isBlocked ? (
@@ -79,17 +79,17 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                                 {!isSelf && (
                                     <Link
                                         href={`/admin/user/${u.id}`}
-                                        className="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/20 transition-all flex items-center gap-1.5"
+                                        className="px-4 py-2 sharp-edge text-[10px] font-black uppercase tracking-widest bg-white/5 hover:bg-white/10 text-white border border-white/5 transition-all flex items-center gap-2"
                                         title="Visualizar Quadros do Usuário"
                                     >
-                                        <Eye className="h-3 w-3" />
+                                        <Eye className="h-3.5 w-3.5" />
                                         <span className="hidden xl:inline">Monitorar</span>
                                     </Link>
                                 )}
 
                                 {isSuperAdmin ? (
-                                    <span className="text-xs text-indigo-400 font-bold bg-indigo-500/10 px-3 py-1.5 rounded-lg border border-indigo-500/20 flex items-center gap-1.5 cursor-not-allowed mx-auto" title="Master Admin Protegido">
-                                        <ShieldCheck className="h-3 w-3" />
+                                    <span className="text-[10px] text-neon-green font-black bg-neon-green/10 px-3 py-2 sharp-edge border border-neon-green/20 flex items-center gap-1.5 cursor-not-allowed mx-auto uppercase tracking-widest" title="Master Admin Protegido">
+                                        <ShieldCheck className="h-3.5 w-3.5" />
                                         Protegido
                                     </span>
                                 ) : isSelf ? (
@@ -98,9 +98,9 @@ export function AdminUserList({ users, currentUserId }: { users: any[], currentU
                                     <button
                                         onClick={() => handleStatusChange(u.id, isBlocked ? "active" : "blocked")}
                                         disabled={loadingId === u.id}
-                                        className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${isBlocked
-                                            ? "bg-slate-800 hover:bg-slate-700 text-slate-300"
-                                            : "bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 border border-rose-500/20"
+                                        className={`px-4 py-2 sharp-edge text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 ${isBlocked
+                                            ? "bg-neon-green text-black hover:bg-neon-green/90"
+                                            : "bg-signal-orange/10 hover:bg-signal-orange/20 text-signal-orange border border-signal-orange/20"
                                             }`}
                                     >
                                         {loadingId === u.id ? (

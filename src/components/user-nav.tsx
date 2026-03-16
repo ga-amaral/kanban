@@ -47,8 +47,8 @@ export function UserNav({ user }: { user: any }) {
                     </button>
                 </div>
             </div>
-            <div className="h-10 w-10 rounded-full bg-gradient-to-tr from-indigo-500 to-purple-500 flex items-center justify-center border border-white/10 shadow-lg">
-                <User className="h-5 w-5 text-white" />
+            <div className="h-10 w-10 sharp-edge bg-carbon flex items-center justify-center border border-white/10 shadow-[0_0_15px_rgba(0,0,0,0.3)] group-hover:border-neon-green/50 transition-colors">
+                <User className="h-5 w-5 text-neon-green transition-transform duration-500 group-hover:scale-110" />
             </div>
         </div>
     )

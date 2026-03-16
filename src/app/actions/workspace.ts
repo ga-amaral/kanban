@@ -4,12 +4,16 @@ import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
+/**
+ * Gabriel Amaral (https://instagram.com/sougabrielamaral)
+ */
+
 const workspaceSchema = z.object({
     name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
 })
 
 export async function createWorkspace(formData: FormData) {
-    const supabase = createClient()
+    const supabase = createClient() as any
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("Não autorizado")
@@ -21,7 +25,8 @@ export async function createWorkspace(formData: FormData) {
         return { error: validation.error.format() }
     }
 
-    const { data, error } = await (supabase.from("workspaces") as any)
+    const { data, error } = await supabase
+        .from("workspaces")
         .insert([{ name, owner_id: user.id }])
         .select()
         .single()
@@ -32,13 +37,14 @@ export async function createWorkspace(formData: FormData) {
     return { data }
 }
 
-export async function getWorkspaces(): Promise<any[]> {
-    const supabase = createClient()
+export async function getWorkspaces() {
+    const supabase = createClient() as any
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return []
 
-    const { data, error } = await (supabase.from("workspaces") as any)
+    const { data, error } = await supabase
+        .from("workspaces")
         .select("*")
         .eq("owner_id", user.id)
         .order("created_at", { ascending: false })
@@ -47,21 +53,23 @@ export async function getWorkspaces(): Promise<any[]> {
     return data
 }
 
-export async function getUserWorkspaces(userId: string): Promise<any[]> {
-    const supabase = createClient()
+export async function getUserWorkspaces(userId: string) {
+    const supabase = createClient() as any
 
     // Check if caller is admin
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
-    const { data: profile } = await (supabase.from("profiles") as any)
+    const { data: profile } = await supabase
+        .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single()
 
     if (profile?.role !== "admin") return []
 
-    const { data, error } = await (supabase.from("workspaces") as any)
+    const { data, error } = await supabase
+        .from("workspaces")
         .select("*")
         .eq("owner_id", userId)
         .order("created_at", { ascending: false })
@@ -71,8 +79,9 @@ export async function getUserWorkspaces(userId: string): Promise<any[]> {
 }
 
 export async function updateWorkspace(id: string, name: string) {
-    const supabase = createClient()
-    const { error } = await (supabase.from("workspaces") as any)
+    const supabase = createClient() as any
+    const { error } = await supabase
+        .from("workspaces")
         .update({ name })
         .eq("id", id)
 
@@ -82,7 +91,7 @@ export async function updateWorkspace(id: string, name: string) {
 }
 
 export async function deleteWorkspace(id: string) {
-    const supabase = createClient()
+    const supabase = createClient() as any
     const { error } = await supabase
         .from("workspaces")
         .delete()

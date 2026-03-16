@@ -98,7 +98,7 @@ export function KanbanColumn({
             <div
                 ref={setNodeRef}
                 style={style}
-                className="w-80 shrink-0 border-2 border-indigo-500/50 bg-slate-900/50 rounded-2xl opacity-50"
+                className="w-80 shrink-0 border-2 border-neon-green/30 bg-carbon/50 sharp-edge opacity-50 shadow-2xl animate-pulse"
             />
         )
     }
@@ -106,27 +106,27 @@ export function KanbanColumn({
     return (
         <div ref={setNodeRef} style={style} className="w-80 shrink-0 flex flex-col max-h-full">
             <div className="flex items-center justify-between mb-4 px-2 group relative">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                     <div
                         {...attributes}
                         {...listeners}
-                        className="p-1 cursor-grab active:cursor-grabbing text-slate-600 hover:text-white transition-colors hover:bg-slate-800 rounded-md"
+                        className="p-1.5 cursor-grab active:cursor-grabbing text-slate-600 hover:text-white transition-colors hover:bg-white/5 sharp-edge"
                     >
                         <GripHorizontal className="h-4 w-4" />
                     </div>
                     <div
-                        className="w-2 h-2 rounded-full shadow-lg"
-                        style={{ backgroundColor: columnColor, boxShadow: `0 0 10px ${columnColor}80` }}
+                        className="w-2.5 h-2.5 sharp-edge shadow-lg"
+                        style={{ backgroundColor: columnColor, boxShadow: `0 0 10px ${columnColor}CC` }}
                     />
-                    <h2 className="text-sm font-bold text-slate-200 uppercase tracking-widest">{column.title}</h2>
-                    <span className="bg-slate-900 text-slate-500 text-[10px] px-2 py-0.5 rounded-full border border-slate-800">
+                    <h2 className="text-[11px] font-black text-white font-outfit uppercase tracking-tighter truncate max-w-[140px] leading-none">{column.title}</h2>
+                    <span className="bg-black/40 text-neon-green text-[10px] px-2.5 py-1 sharp-edge border border-white/5 font-black">
                         {cards.length}
                     </span>
                 </div>
                 <div className="relative">
                     <button
                         onClick={() => setShowMenu(!showMenu)}
-                        className="text-slate-500 hover:text-white transition-colors p-1 hover:bg-slate-900 rounded-md"
+                        className="text-slate-600 hover:text-white transition-colors p-1.5 hover:bg-white/5 sharp-edge"
                     >
                         <MoreHorizontal className="h-4 w-4" />
                     </button>
@@ -138,11 +138,11 @@ export function KanbanColumn({
                                 initial={{ opacity: 0, y: -10, scale: 0.95 }}
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                                className="absolute top-full right-0 mt-2 w-48 bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl p-2 z-50 overflow-hidden"
+                                className="absolute top-full right-0 mt-2 w-48 bg-carbon border border-white/10 sharp-edge shadow-2xl p-2.5 z-50 overflow-hidden"
                             >
-                                <div className="mb-2">
-                                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-2">Cores</p>
-                                    <div className="flex flex-wrap gap-1 px-1">
+                                <div className="mb-3">
+                                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] px-2 mb-3">Cromatismo</p>
+                                    <div className="grid grid-cols-4 gap-2 px-1">
                                         {COLORS.map(color => (
                                             <button
                                                 key={color}
@@ -150,7 +150,7 @@ export function KanbanColumn({
                                                     onColumnUpdate(column.id, { color })
                                                     setShowMenu(false)
                                                 }}
-                                                className="w-6 h-6 rounded-full border-2 transition-transform hover:scale-110"
+                                                className="w-full aspect-square sharp-edge border-2 transition-transform hover:scale-105"
                                                 style={{
                                                     backgroundColor: color,
                                                     borderColor: columnColor === color ? 'white' : 'transparent'
@@ -165,10 +165,10 @@ export function KanbanColumn({
                                         setShowDeleteConfirm(true)
                                         setShowMenu(false)
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-rose-500/10 text-rose-400 rounded-xl transition-colors text-xs font-bold"
+                                    className="w-full flex items-center justify-center gap-2 px-3 py-3 hover:bg-signal-orange/10 text-signal-orange sharp-edge transition-colors text-[10px] font-black uppercase tracking-widest border border-signal-orange/20"
                                 >
-                                    <Trash2 className="h-3 w-3" />
-                                    Excluir Coluna
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                    Expurgar Coluna
                                 </button>
                             </motion.div>
                         )}
@@ -191,54 +191,58 @@ export function KanbanColumn({
                 </SortableContext>
 
                 {isAddingCard && (
-                    <form onSubmit={handleAddCard} className="bg-slate-900 border border-indigo-500/30 p-4 rounded-2xl space-y-4 shadow-xl">
-                        <div className="space-y-3">
-                            <input name="name" placeholder="Nome do Contato" required className="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors" />
-                            <PhoneInput name="phone" required placeholder="Telefone" />
-                            <input name="due_date" type="date" className="w-full bg-slate-950 border border-slate-800 text-sm p-3 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-colors color-scheme-dark" />
 
-                            <div className="space-y-2 pt-2 border-t border-slate-800/50">
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Campos Adicionais</p>
+                    <form onSubmit={handleAddCard} className="bg-carbon border border-neon-green/30 p-5 sharp-edge space-y-5 shadow-2xl animate-spring">
+                        <div className="space-y-4">
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black text-neon-green uppercase tracking-[0.2em] ml-1">Efetivar Lead</label>
+                                <input name="name" placeholder="NOME DO CONTATO" required className="w-full bg-black/40 border border-white/5 text-xs p-4 sharp-edge text-white focus:outline-none focus:border-neon-green/50 transition-colors placeholder:text-slate-700 font-black uppercase tracking-widest" />
+                            </div>
+                            <PhoneInput name="phone" required placeholder="TELEFONE" />
+                            <input name="due_date" type="date" className="w-full bg-black/40 border border-white/5 text-xs p-4 sharp-edge text-white focus:outline-none focus:border-neon-green/50 transition-colors color-scheme-dark font-black uppercase tracking-widest" />
+
+                            <div className="space-y-3 pt-4 border-t border-white/5">
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">Metadados</p>
                                 {customFields.map((field, index) => (
                                     <div key={index} className="flex gap-2">
                                         <input
-                                            placeholder="Chave"
+                                            placeholder="CHAVE"
                                             value={field.key}
                                             onChange={(e) => {
                                                 const newFields = [...customFields]
                                                 newFields[index].key = e.target.value
                                                 setCustomFields(newFields)
                                             }}
-                                            className="w-1/2 bg-slate-950 border border-slate-800 text-[10px] p-2 rounded-lg text-white"
+                                            className="w-1/2 bg-black/40 border border-white/5 text-[9px] font-black uppercase tracking-widest p-2 sharp-edge text-white focus:border-neon-green/30 outline-none"
                                         />
                                         <input
-                                            placeholder="Valor"
+                                            placeholder="VALOR"
                                             value={field.value}
                                             onChange={(e) => {
                                                 const newFields = [...customFields]
                                                 newFields[index].value = e.target.value
                                                 setCustomFields(newFields)
                                             }}
-                                            className="w-1/2 bg-slate-950 border border-slate-800 text-[10px] p-2 rounded-lg text-white"
+                                            className="w-1/2 bg-black/40 border border-white/5 text-[9px] font-black uppercase tracking-widest p-2 sharp-edge text-white focus:border-neon-green/30 outline-none"
                                         />
                                     </div>
                                 ))}
                                 <button
                                     type="button"
                                     onClick={() => setCustomFields([...customFields, { key: "", value: "" }])}
-                                    className="text-[10px] text-indigo-400 hover:text-indigo-300 font-medium"
+                                    className="text-[9px] text-neon-green hover:underline font-black uppercase tracking-[0.2em] transition-all"
                                 >
-                                    + Adicionar Campo
+                                    + Inserir Dado
                                 </button>
                             </div>
                         </div>
 
-                        <div className="flex gap-2 pt-2 border-t border-slate-800/50">
-                            <button type="submit" disabled={loading} className="flex-1 bg-white text-slate-950 text-xs font-bold py-2 rounded-xl hover:bg-slate-200 transition-all flex justify-center items-center">
-                                {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Salvar"}
+                        <div className="flex flex-col gap-2 pt-4 border-t border-white/5">
+                            <button type="submit" disabled={loading} className="w-full bg-neon-green text-black text-[10px] font-black uppercase tracking-widest py-3 sharp-edge hover:bg-neon-green/90 transition-all flex justify-center items-center gap-2">
+                                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Efetivar Registro <Plus className="h-3.5 w-3.5" /></>}
                             </button>
-                            <button type="button" onClick={() => setIsAddingCard(false)} className="px-3 text-xs font-medium text-slate-400 hover:text-white transition-colors">
-                                Cancelar
+                            <button type="button" onClick={() => setIsAddingCard(false)} className="w-full py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-colors sharp-edge bg-white/5">
+                                Abortar
                             </button>
                         </div>
                     </form>
@@ -250,48 +254,48 @@ export function KanbanColumn({
                             setCustomFields(globalCustomFields.map(key => ({ key, value: "" })))
                             setIsAddingCard(true)
                         }}
-                        className="w-full py-3 bg-slate-900/20 border border-dashed border-slate-800 hover:border-slate-700 hover:bg-slate-900/50 transition-colors rounded-2xl flex items-center justify-center gap-2 text-slate-500 text-xs"
+                        className="w-full py-4 bg-black/20 border border-dashed border-white/10 hover:border-neon-green/30 hover:bg-neon-green/5 transition-all sharp-edge flex items-center justify-center gap-2 text-slate-600 hover:text-neon-green text-[10px] font-black uppercase tracking-widest animate-sparkle"
                     >
-                        <Plus className="h-3 w-3" />
-                        Adicionar Card
+                        <Plus className="h-3.5 w-3.5" />
+                        Injetar Card
                     </button>
                 )}
             </div>
 
-            {/* Modal de Exclusão de Coluna */}
+            {/* Modal de Exclusão de Coluna - Radical Style */}
             <AnimatePresence>
                 {showDeleteConfirm && (
-                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                            animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-[32px] overflow-hidden shadow-2xl p-8 text-center"
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="bg-carbon border border-white/5 w-full max-w-sm sharp-edge overflow-hidden shadow-2xl p-10 text-center"
                         >
-                            <div className="w-16 h-16 bg-rose-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 border border-rose-500/20">
-                                <Trash2 className="h-8 w-8 text-rose-500" />
+                            <div className="w-20 h-20 bg-signal-orange/10 sharp-edge flex items-center justify-center mx-auto mb-8 border border-signal-orange/20">
+                                <Trash2 className="h-10 w-10 text-signal-orange" />
                             </div>
 
-                            <h3 className="text-xl font-bold text-white font-outfit mb-2">Excluir Coluna?</h3>
-                            <p className="text-slate-400 text-sm mb-8">
-                                Esta ação não pode ser desfeita. Todos os cards pertencentes a esta coluna ({cards.length} cards) serão <b>permanentemente</b> apagados.
+                            <h3 className="text-xl font-black text-white font-outfit uppercase tracking-tighter mb-2">Expurgar Coluna?</h3>
+                            <p className="text-slate-400 text-[11px] font-bold uppercase tracking-tight mb-8 leading-relaxed">
+                                Esta operação é irreversível. Todos os <b>{cards.length}</b> registros associados serão deletados.
                             </p>
 
-                            <div className="flex flex-col gap-3">
+                            <div className="flex flex-col gap-4">
                                 <button
                                     onClick={() => {
                                         onColumnDelete(column.id)
                                         setShowDeleteConfirm(false)
                                     }}
-                                    className="w-full bg-rose-600 hover:bg-rose-500 text-white font-bold py-4 rounded-2xl shadow-lg shadow-rose-900/20 transition-all flex items-center justify-center gap-2"
+                                    className="w-full bg-signal-orange text-black font-black uppercase tracking-widest py-4 sharp-edge shadow-lg transition-all flex items-center justify-center gap-2 text-xs"
                                 >
-                                    Sim, Excluir Coluna
+                                    Confirmar Expurgo
                                 </button>
                                 <button
                                     onClick={() => setShowDeleteConfirm(false)}
-                                    className="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-4 rounded-2xl transition-all"
+                                    className="w-full bg-white/5 text-slate-400 hover:text-white font-black uppercase tracking-widest py-4 sharp-edge transition-all text-xs"
                                 >
-                                    Não, Cancelar
+                                    Abortar
                                 </button>
                             </div>
                         </motion.div>

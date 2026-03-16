@@ -88,7 +88,7 @@ export default async function AdminUserDashboard({ params }: { params: { id: str
                     </div>
                 ) : (
                     <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {workspaces.map((workspace) => (
+                        {workspaces.map((workspace: any) => (
                             <Link
                                 key={workspace.id}
                                 href={`/workspace/${workspace.id}`}

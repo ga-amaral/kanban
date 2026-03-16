@@ -3,38 +3,51 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
-export async function createColumn(workspaceId: string, title: string, order: number) {
-    const supabase = createClient()
+/**
+ * Gabriel Amaral (https://instagram.com/sougabrielamaral)
+ * Atualizado para refletir o schema real (order_index)
+ */
+
+export async function createColumn(boardId: string, title: string, orderIndex: number) {
+    const supabase = createClient() as any
     const { data, error } = await supabase
         .from("columns")
-        .insert({ workspace_id: workspaceId, title, order } as any)
+        .insert({ 
+            board_id: boardId, 
+            title, 
+            order_index: orderIndex 
+        })
         .select()
         .single()
 
     if (error) return { error: error.message }
-    revalidatePath(`/workspace/${workspaceId}`)
+    
+    // Como colunas pertencem a boards, precisamos saber o workspaceId para revalidar.
+    // Se a UI for baseada em boardId em vez de workspaceId, ajustaremos o path.
+    revalidatePath(`/workspace/`) 
     return { data }
 }
 
-export async function getColumns(workspaceId: string) {
-    const supabase = createClient()
+export async function getColumns(boardId: string) {
+    const supabase = createClient() as any
     const { data, error } = await supabase
         .from("columns")
         .select("*")
-        .eq("workspace_id", workspaceId)
-        .order("order", { ascending: true })
+        .eq("board_id", boardId)
+        .order("order_index", { ascending: true })
 
     if (error) return []
     return data
 }
 
 export async function updateColumnOrder(workspaceId: string, columns: { id: string, order: number }[]) {
-    const supabase = createClient()
+    const supabase = createClient() as any
 
     // Simples update em loop para MVP, ideal seria uma function no RPC
     for (const col of columns) {
-        await (supabase.from("columns") as any)
-            .update({ order: col.order })
+        await supabase
+            .from("columns")
+            .update({ order_index: col.order })
             .eq("id", col.id)
     }
 
@@ -45,7 +58,10 @@ export async function updateColumn(workspaceId: string, columnId: string, data: 
     const supabase = createClient() as any
     const { error } = await supabase
         .from("columns")
-        .update(data)
+        .update({
+            title: data.title,
+            // color não existe no schema real da tabela columns
+        } as any)
         .eq("id", columnId)
 
     if (error) return { error: error.message }

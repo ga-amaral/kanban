@@ -32,42 +32,43 @@ export default async function WorkspacePage({
     const activeTab = searchParams.tab || "kanban"
 
     return (
-        <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col overflow-hidden">
-            {/* Workspace Header */}
-            <header className="border-b border-slate-800/50 bg-slate-900/50 backdrop-blur-md z-40">
+        <div className="min-h-screen bg-transparent text-slate-200 flex flex-col overflow-hidden">
+            {/* Workspace Header - Radical Redesign */}
+            <header className="border-b border-white/5 bg-carbon z-40">
                 <div className="mx-auto px-6 h-16 flex items-center justify-between">
                     <div className="flex items-center gap-6">
                         <Link
                             href="/"
-                            className="p-2 hover:bg-slate-800 rounded-lg transition-colors text-slate-400 hover:text-white"
+                            className="p-2 hover:bg-white/5 sharp-edge transition-colors text-slate-400 hover:text-white group"
                         >
-                            <ArrowLeft className="h-5 w-5" />
+                            <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
                         </Link>
-                        <div className="h-6 w-px bg-slate-800" />
+                        <div className="h-6 w-px bg-white/5" />
                         <div className="flex items-center gap-8">
-                            <div className="flex flex-col border-r border-slate-800 pr-8">
-                                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-0.5">Workspace</span>
-                                <h1 className="text-sm font-bold text-white font-outfit leading-none truncate max-w-[150px]">
+                            <div className="flex flex-col border-r border-white/5 pr-8">
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-0.5">Workspace</span>
+                                <h1 className="text-sm font-black text-white font-outfit uppercase tracking-tighter leading-none truncate max-w-[150px]">
                                     {workspace.name}
                                 </h1>
                             </div>
 
-                            <nav className="flex items-center gap-1 bg-slate-950/50 p-1 rounded-xl border border-slate-800">
+                            <nav className="flex items-center gap-0 bg-black/40 p-0 sharp-edge border border-white/5">
                                 <Link
                                     href={`/workspace/${params.id}?tab=kanban`}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'kanban' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === 'kanban' ? 'bg-neon-green text-black' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                                 >
                                     Quadro
+                                    {activeTab === 'kanban' && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-black/10" />}
                                 </Link>
                                 <Link
                                     href={`/workspace/${params.id}?tab=automations`}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'automations' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === 'automations' ? 'bg-neon-green text-black' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                                 >
                                     Automações
                                 </Link>
                                 <Link
                                     href={`/workspace/${params.id}?tab=settings`}
-                                    className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${activeTab === 'settings' ? 'bg-indigo-600 text-white shadow-lg' : 'text-slate-500 hover:text-slate-300'}`}
+                                    className={`px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] transition-all relative ${activeTab === 'settings' ? 'bg-neon-green text-black' : 'text-slate-500 hover:text-white hover:bg-white/5'}`}
                                 >
                                     Configurações
                                 </Link>

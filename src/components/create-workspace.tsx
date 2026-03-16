@@ -25,22 +25,25 @@ export function CreateWorkspace() {
     }
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 stagger-reveal">
             <div className="relative group">
-                <Plus className="absolute left-3 top-3.5 h-4 w-4 text-slate-500 group-focus-within:text-indigo-400" />
+                <Plus className="absolute left-3 top-3.5 h-4 w-4 text-slate-600 group-focus-within:text-neon-green transition-colors" />
                 <input
                     name="name"
                     placeholder="Nome do novo Workspace"
                     required
-                    className="w-full bg-slate-900 border border-slate-800 text-white pl-10 pr-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                    className="w-full bg-black/40 border border-white/5 text-white pl-10 pr-4 py-3 sharp-edge focus:outline-none focus:border-neon-green/50 transition-all font-bold placeholder:text-slate-700 text-sm"
                 />
             </div>
-            {error && <p className="text-xs text-rose-500">{error}</p>}
+            {error && <p className="text-[10px] uppercase font-black tracking-widest text-signal-orange">{error}</p>}
             <button
                 disabled={loading}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition-all flex items-center justify-center gap-2"
+                className="w-full bg-neon-green hover:bg-neon-green/90 text-black font-black uppercase tracking-widest py-3 sharp-edge transition-all flex items-center justify-center gap-2 text-xs relative overflow-hidden group active:scale-[0.98]"
             >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar Workspace"}
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 pointer-events-none" />
+                <span className="relative z-10 flex items-center gap-2">
+                    {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Criar Workspace"}
+                </span>
             </button>
         </form>
     )

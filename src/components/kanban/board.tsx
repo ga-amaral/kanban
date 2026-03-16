@@ -231,34 +231,35 @@ export function KanbanBoard({
         <div className="flex flex-col h-full w-full space-y-6">
             <Toaster position="top-right" theme="dark" richColors />
 
-            {/* Sub-Header: Refresh & Multi-View Switcher */}
-            <div className="px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/5 bg-white/[0.02] backdrop-blur-sm shadow-xl">
-                <div className="flex items-center gap-4">
+            {/* Sub-Header: Refresh & Multi-View Switcher - Radical Style */}
+            <div className="px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/5 bg-carbon/80 backdrop-blur-xl shadow-2xl sticky top-0 z-30">
+                <div className="flex items-center gap-5">
                     <button
                         onClick={handleRefresh}
-                        className="flex items-center gap-2 text-[10px] font-bold text-slate-400 hover:text-white transition-all uppercase tracking-widest bg-slate-900 shadow-inner px-4 py-2 rounded-2xl border border-slate-800"
+                        className="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-white transition-all uppercase tracking-[0.2em] bg-black/40 px-5 py-2.5 sharp-edge border border-white/5 hover:border-white/10"
                     >
-                        <RefreshCw className={`h-3 w-3 ${isRefreshing ? 'animate-spin' : ''}`} />
+                        <RefreshCw className={`h-3.5 w-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
                         Sincronizar
                     </button>
-                    <div className="h-4 w-px bg-slate-800" />
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
-                        {cards.length} Cards
+                    <div className="h-4 w-[1px] bg-white/5" />
+                    <span className="text-[10px] text-neon-green font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                        <div className="h-1.5 w-1.5 bg-neon-green rounded-full animate-pulse" />
+                        {cards.length} Cards Ativos
                     </span>
                 </div>
 
-                <div className="flex items-center gap-4">
-                    <div className="flex bg-slate-950 p-1 rounded-2xl border border-slate-800">
+                <div className="flex items-center gap-5">
+                    <div className="flex bg-black/40 p-1 sharp-edge border border-white/5">
                         <button
                             onClick={() => setView("kanban")}
-                            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-bold uppercase transition-all ${view === "kanban" ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:text-slate-300'}`}
+                            className={`flex items-center gap-2 px-6 py-2.5 sharp-edge text-[10px] font-black uppercase tracking-widest transition-all ${view === "kanban" ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20' : 'text-slate-500 hover:text-slate-300'}`}
                         >
                             <LayoutGrid className="h-3.5 w-3.5" />
-                            Kanban
+                            Quadro
                         </button>
                         <button
                             onClick={() => setView("list")}
-                            className={`flex items-center gap-2 px-5 py-2 rounded-xl text-[11px] font-bold uppercase transition-all ${view === "list" ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' : 'text-slate-500 hover:text-slate-300'}`}
+                            className={`flex items-center gap-2 px-6 py-2.5 sharp-edge text-[10px] font-black uppercase tracking-widest transition-all ${view === "list" ? 'bg-neon-green text-black shadow-lg shadow-neon-green/20' : 'text-slate-500 hover:text-slate-300'}`}
                         >
                             <List className="h-3.5 w-3.5" />
                             Lista
@@ -267,10 +268,10 @@ export function KanbanBoard({
 
                     <button
                         onClick={() => setImportingTo(columns[0]?.id)}
-                        className="flex items-center gap-2 bg-white text-black px-5 py-2 rounded-2xl transition-all shadow-xl hover:bg-slate-100 text-[11px] font-bold uppercase"
+                        className="flex items-center gap-2 bg-white text-black px-6 py-2.5 sharp-edge transition-all shadow-xl hover:bg-slate-100 text-[10px] font-black uppercase tracking-widest border border-white/10"
                     >
                         <Upload className="h-3.5 w-3.5" />
-                        Importar CSV
+                        Importar Dados
                     </button>
                 </div>
             </div>
@@ -308,27 +309,32 @@ export function KanbanBoard({
                             {/* Add Column Button */}
                             <motion.div layout className="w-80 shrink-0">
                                 {isAddingColumn ? (
-                                    <div className="bg-slate-900/40 border-2 border-indigo-500/30 p-4 rounded-3xl space-y-3">
-                                        <input
-                                            autoFocus
-                                            placeholder="Título da coluna..."
-                                            className="w-full bg-slate-950 border border-slate-800 text-white p-3 rounded-2xl outline-none focus:border-indigo-500 text-sm"
-                                            value={newColumnTitle}
-                                            onChange={(e) => setNewColumnTitle(e.target.value)}
-                                            onKeyDown={(e) => e.key === 'Enter' && handleCreateColumn()}
-                                        />
-                                        <div className="flex gap-2">
-                                            <button onClick={handleCreateColumn} className="flex-1 bg-indigo-600 text-white font-bold py-2 rounded-xl text-xs">Adicionar</button>
-                                            <button onClick={() => setIsAddingColumn(false)} className="px-4 bg-slate-800 text-white font-bold py-2 rounded-xl text-xs">Cancelar</button>
+                                    <div className="bg-carbon border border-neon-green/30 p-5 sharp-edge space-y-4 shadow-2xl animate-spring">
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black text-neon-green uppercase tracking-[0.2em] ml-1">Nova Coluna</label>
+                                            <input
+                                                autoFocus
+                                                placeholder="TÍTULO DA COLUNA..."
+                                                className="w-full bg-black/40 border border-white/5 text-white p-4 sharp-edge outline-none focus:border-neon-green/50 text-[10px] font-black uppercase tracking-widest"
+                                                value={newColumnTitle}
+                                                onChange={(e) => setNewColumnTitle(e.target.value)}
+                                                onKeyDown={(e) => e.key === 'Enter' && handleCreateColumn()}
+                                            />
+                                        </div>
+                                        <div className="flex flex-col gap-2">
+                                            <button onClick={handleCreateColumn} className="w-full bg-neon-green text-black font-black uppercase tracking-widest py-3 sharp-edge text-xs">Criar Coluna</button>
+                                            <button onClick={() => setIsAddingColumn(false)} className="w-full bg-white/5 text-slate-400 hover:text-white font-black uppercase tracking-widest py-3 sharp-edge text-xs transition-colors">Cancelar</button>
                                         </div>
                                     </div>
                                 ) : (
                                     <button
                                         onClick={() => setIsAddingColumn(true)}
-                                        className="w-full h-40 bg-slate-900/10 border-2 border-dashed border-slate-800/50 hover:border-indigo-500/30 rounded-3xl flex flex-col items-center justify-center gap-2 text-slate-500 hover:text-indigo-400 transition-all group"
+                                        className="w-full h-40 bg-black/20 border-2 border-dashed border-white/5 hover:border-neon-green/20 sharp-edge flex flex-col items-center justify-center gap-3 text-slate-600 hover:text-neon-green transition-all group animate-sparkle"
                                     >
-                                        <Plus className="h-6 w-6" />
-                                        <span className="text-[10px] font-bold uppercase tracking-widest">Nova Coluna</span>
+                                        <div className="p-3 bg-white/5 sharp-edge group-hover:bg-neon-green/10 transition-colors">
+                                            <Plus className="h-6 w-6" />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em]">Criar Nova Coluna</span>
                                     </button>
                                 )}
                             </motion.div>
