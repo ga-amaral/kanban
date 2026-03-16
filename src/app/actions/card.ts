@@ -26,10 +26,17 @@ export async function createCard(workspaceId: string, columnId: string, cardData
         .single()
 
     if (error) return { error: error.message }
-    // Nota: O schema real não tem workspace_id na tabela cards, mas sim colunas -> boards.
-    // Dependendo de como a UI está estruturada, precisamos revalidar o path correto.
+    
+    // Mapear para o formato do frontend
+    const mappedData = {
+        ...data,
+        contact_name: data.client_name,
+        contact_phone: data.phone,
+        due_date: data.deadline_date
+    }
+
     revalidatePath(`/workspace/${workspaceId}`)
-    return { data }
+    return { data: mappedData }
 }
 
 export async function getCards(columnId: string) {
@@ -41,7 +48,14 @@ export async function getCards(columnId: string) {
         .order("order_index", { ascending: true })
 
     if (error) return []
-    return data
+    
+    // Mapear campos do DB para os nomes esperados pelo frontend
+    return data.map((card: any) => ({
+        ...card,
+        contact_name: card.client_name,
+        contact_phone: card.phone,
+        due_date: card.deadline_date
+    }))
 }
 
 const resolveInternalValue = (card: any, columnTitle: string, internalKey: string) => {
@@ -126,7 +140,7 @@ export async function moveCard(workspaceId: string, cardId: string, columnId: st
 
 export async function updateCard(workspaceId: string, cardId: string, updateData: any) {
     const supabase = createClient() as any
-    const { data, error } = await supabase
+    const { data: updatedCard, error } = await supabase
         .from("cards")
         .update({
             title: updateData.title,
@@ -141,8 +155,16 @@ export async function updateCard(workspaceId: string, cardId: string, updateData
         .single()
 
     if (error) return { error: error.message }
+
+    const mappedData = {
+        ...updatedCard,
+        contact_name: updatedCard.client_name,
+        contact_phone: updatedCard.phone,
+        due_date: updatedCard.deadline_date
+    }
+
     revalidatePath(`/workspace/${workspaceId}`)
-    return { data }
+    return { data: mappedData }
 }
 
 export async function deleteCard(workspaceId: string, id: string) {

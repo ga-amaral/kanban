@@ -59,8 +59,8 @@ export async function updateColumn(workspaceId: string, columnId: string, data: 
         .from("columns")
         .update({
             title: data.title,
-            // color não existe no schema real da tabela columns
-        } as any)
+            color: data.color
+        })
         .eq("id", columnId)
 
     if (error) return { error: error.message }

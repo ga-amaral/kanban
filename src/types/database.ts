@@ -233,6 +233,7 @@ export type Database = {
           updated_at: string
           urgency_level: Database["public"]["Enums"]["urgency_level"] | null
           value_range: string | null
+          custom_data_jsonb: Json | null
         }
         Insert: {
           assigned_to?: string | null
