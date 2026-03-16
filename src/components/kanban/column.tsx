@@ -5,6 +5,7 @@ import { useSortable, SortableContext, verticalListSortingStrategy } from "@dnd-
 import { CSS } from "@dnd-kit/utilities"
 import { KanbanCard } from "./card"
 import { createCard } from "@/app/actions/card"
+import { toast } from "sonner"
 import { Plus, MoreHorizontal, Loader2, GripHorizontal, Palette, Trash2, X } from "lucide-react"
 import { PhoneInput } from "../phone-input"
 import { AnimatePresence, motion } from "framer-motion"
@@ -68,27 +69,37 @@ export function KanbanColumn({
         e.preventDefault()
         setLoading(true)
 
-        const formData = new FormData(e.currentTarget)
+        try {
+            const formData = new FormData(e.currentTarget)
 
-        const customData: Record<string, string> = {}
-        customFields.forEach(field => {
-            if (field.key) customData[field.key] = field.value
-        })
+            const customData: Record<string, string> = {}
+            customFields.forEach(field => {
+                if (field.key) customData[field.key] = field.value
+            })
 
-        const cardData = {
-            contact_name: formData.get("name"),
-            contact_phone: formData.get("phone"),
-            due_date: formData.get("due_date"),
-            custom_data: customData
+            const cardData = {
+                contact_name: formData.get("name"),
+                contact_phone: formData.get("phone"),
+                due_date: formData.get("due_date"),
+                custom_data: customData
+            }
+
+            const result = await createCard(workspaceId, column.id, cardData)
+            
+            if (result?.error) {
+                toast.error(`Erro ao criar card: ${result.error}`)
+            } else if (result?.data) {
+                onCardCreate(result.data)
+                setIsAddingCard(false)
+                setCustomFields([])
+                toast.success("Card criado com sucesso!")
+            }
+        } catch (error: any) {
+            toast.error("Erro inesperado ao criar card.")
+            console.error(error)
+        } finally {
+            setLoading(false)
         }
-
-        const result = await createCard(workspaceId, column.id, cardData)
-        if (result.data) {
-            onCardCreate(result.data)
-            setIsAddingCard(false)
-            setCustomFields([])
-        }
-        setLoading(false)
     }
 
     const columnColor = column.color || "#6366f1"

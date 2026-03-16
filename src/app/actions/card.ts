@@ -18,7 +18,7 @@ export async function createCard(workspaceId: string, columnId: string, cardData
             title: cardData.title || cardData.contact_name,
             client_name: cardData.client_name || cardData.contact_name,
             phone: cardData.phone || cardData.contact_phone,
-            deadline_date: cardData.deadline_date || cardData.due_date,
+            deadline_date: (cardData.deadline_date || cardData.due_date) || null,
             order_index: cardData.order_index || 0,
             description: cardData.description || ""
         }])
@@ -132,7 +132,7 @@ export async function updateCard(workspaceId: string, cardId: string, updateData
             title: updateData.title,
             client_name: updateData.client_name || updateData.contact_name,
             phone: updateData.phone || updateData.contact_phone,
-            deadline_date: updateData.deadline_date || updateData.due_date,
+            deadline_date: (updateData.deadline_date || updateData.due_date) || null,
             description: updateData.description,
             urgency_level: updateData.urgency_level
         })
