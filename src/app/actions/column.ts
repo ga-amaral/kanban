@@ -8,12 +8,13 @@ import { revalidatePath } from "next/cache"
  * Atualizado para refletir o schema real (order_index)
  */
 
-export async function createColumn(boardId: string, title: string, orderIndex: number) {
+export async function createColumn(workspaceId: string, title: string, orderIndex: number) {
     const supabase = createClient() as any
     const { data, error } = await supabase
         .from("columns")
         .insert({ 
-            board_id: boardId, 
+            workspace_id: workspaceId,
+            board_id: "00000000-0000-0000-0000-000000000001", // Default board for production
             title, 
             order_index: orderIndex 
         })
@@ -22,18 +23,16 @@ export async function createColumn(boardId: string, title: string, orderIndex: n
 
     if (error) return { error: error.message }
     
-    // Como colunas pertencem a boards, precisamos saber o workspaceId para revalidar.
-    // Se a UI for baseada em boardId em vez de workspaceId, ajustaremos o path.
-    revalidatePath(`/workspace/`) 
+    revalidatePath(`/workspace/${workspaceId}`) 
     return { data }
 }
 
-export async function getColumns(boardId: string) {
+export async function getColumns(workspaceId: string) {
     const supabase = createClient() as any
     const { data, error } = await supabase
         .from("columns")
         .select("*")
-        .eq("board_id", boardId)
+        .eq("workspace_id", workspaceId)
         .order("order_index", { ascending: true })
 
     if (error) return []

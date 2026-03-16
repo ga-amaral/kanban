@@ -216,6 +216,7 @@ export type Database = {
           assigned_to: string | null
           client_name: string | null
           column_id: string
+          workspace_id: string | null
           created_at: string
           created_by: string | null
           deadline_date: string | null
@@ -237,6 +238,7 @@ export type Database = {
           assigned_to?: string | null
           client_name?: string | null
           column_id: string
+          workspace_id?: string | null
           created_at?: string
           created_by?: string | null
           deadline_date?: string | null
@@ -258,6 +260,7 @@ export type Database = {
           assigned_to?: string | null
           client_name?: string | null
           column_id?: string
+          workspace_id?: string | null
           created_at?: string
           created_by?: string | null
           deadline_date?: string | null
@@ -302,6 +305,7 @@ export type Database = {
       columns: {
         Row: {
           board_id: string
+          workspace_id: string | null
           created_at: string
           id: string
           order_index: number
@@ -310,6 +314,7 @@ export type Database = {
         }
         Insert: {
           board_id: string
+          workspace_id?: string | null
           created_at?: string
           id?: string
           order_index: number
@@ -318,6 +323,7 @@ export type Database = {
         }
         Update: {
           board_id?: string
+          workspace_id?: string | null
           created_at?: string
           id?: string
           order_index?: number

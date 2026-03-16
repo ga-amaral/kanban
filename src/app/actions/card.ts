@@ -14,7 +14,8 @@ export async function createCard(workspaceId: string, columnId: string, cardData
         .from("cards")
         .insert([{
             column_id: columnId,
-            title: cardData.title || cardData.contact_name, // Suporte para ambos os campos durante a transição
+            workspace_id: workspaceId,
+            title: cardData.title || cardData.contact_name,
             client_name: cardData.client_name || cardData.contact_name,
             phone: cardData.phone || cardData.contact_phone,
             deadline_date: cardData.deadline_date || cardData.due_date,
@@ -162,7 +163,7 @@ export async function bulkCreateCards(workspaceId: string, cards: any[]) {
         .from("cards")
         .insert(cards.map(c => ({
             ...c,
-            // Removendo workspace_id se não existir na tabela
+            workspace_id: workspaceId
         })))
         .select()
 
