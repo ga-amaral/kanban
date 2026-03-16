@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server"
 import { getColumns } from "@/app/actions/column"
-import { getCards } from "@/app/actions/card"
+import { getCardsByWorkspace } from "@/app/actions/card"
 import { KanbanBoard } from "@/components/kanban/board"
 import { UserNav } from "@/components/user-nav"
 import { Kanban, ChevronLeft, Settings, ArrowLeft } from "lucide-react"
@@ -28,7 +28,7 @@ export default async function WorkspacePage({
     if (!workspace) notFound()
 
     const columns = await getColumns(params.id)
-    const cards = await getCards(params.id)
+    const cards = await getCardsByWorkspace(params.id)
     const activeTab = searchParams.tab || "kanban"
 
     return (

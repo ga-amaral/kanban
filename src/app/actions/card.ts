@@ -58,6 +58,25 @@ export async function getCards(columnId: string) {
     }))
 }
 
+export async function getCardsByWorkspace(workspaceId: string) {
+    const supabase = createClient() as any
+    const { data, error } = await supabase
+        .from("cards")
+        .select("*")
+        .eq("workspace_id", workspaceId)
+        .order("order_index", { ascending: true })
+
+    if (error) return []
+    
+    // Mapear campos do DB para os nomes esperados pelo frontend
+    return data.map((card: any) => ({
+        ...card,
+        contact_name: card.client_name,
+        contact_phone: card.phone,
+        due_date: card.deadline_date
+    }))
+}
+
 const resolveInternalValue = (card: any, columnTitle: string, internalKey: string) => {
     if (internalKey === 'client_name' || internalKey === 'contact_name') return card.client_name
     if (internalKey === 'phone' || internalKey === 'contact_phone') return card.phone
