@@ -3,6 +3,7 @@ import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SidebarNav } from "@/components/sidebar-nav";
+import { CommandPalette } from "@/components/command-palette";
 import { getCurrentUserRole } from "@/app/actions/auth";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -33,7 +34,8 @@ export default async function RootLayout({
                 >
                     <div className="flex min-h-screen bg-black text-white selection:bg-neon-green/30 selection:text-neon-green">
                         <SidebarNav userRole={role} />
-                        <main className="flex-1 ml-16 relative overflow-hidden">
+                        <CommandPalette />
+                        <main className="flex-1 md:ml-16 relative overflow-hidden min-w-0">
                             {/* Global background effects */}
                             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                                 <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-neon-green/5 blur-[120px] rounded-full" />
@@ -41,7 +43,7 @@ export default async function RootLayout({
                                 <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100 mix-blend-overlay" />
                             </div>
                             
-                            <div className="relative z-10">
+                            <div className="relative z-10 w-full">
                                 {children}
                             </div>
                         </main>

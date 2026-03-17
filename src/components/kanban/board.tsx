@@ -232,7 +232,7 @@ export function KanbanBoard({
             <Toaster position="top-right" theme="dark" richColors />
 
             {/* Sub-Header: Refresh & Multi-View Switcher - Radical Style */}
-            <div className="px-8 py-5 flex flex-col md:flex-row items-center justify-between gap-4 border-b border-white/5 bg-carbon/80 backdrop-blur-xl shadow-2xl sticky top-0 z-30">
+            <div className="px-4 md:px-8 py-4 md:py-5 flex flex-col md:flex-row items-center justify-between gap-4 glass z-30 sticky top-0 shadow-2xl">
                 <div className="flex items-center gap-5">
                     <button
                         onClick={handleRefresh}
@@ -277,7 +277,7 @@ export function KanbanBoard({
             </div>
 
             {/* Main Content Area */}
-            <div className="flex-1 px-8 overflow-hidden">
+            <div className="flex-1 px-4 md:px-8 overflow-hidden min-h-0">
                 {view === "kanban" ? (
                     <DndContext
                         sensors={sensors}
@@ -286,7 +286,7 @@ export function KanbanBoard({
                         onDragOver={handleDragOver}
                         onDragEnd={handleDragEnd}
                     >
-                        <div className="flex h-full overflow-x-auto gap-6 pb-8 scrollbar-hide">
+                        <div className="flex h-full overflow-x-auto gap-4 md:gap-6 pb-8 scrollbar-hide snap-x snap-mandatory">
                             <SortableContext items={columns.map(c => c.id)} strategy={horizontalListSortingStrategy}>
                                 <LayoutGroup>
                                     {columns.map((column) => (

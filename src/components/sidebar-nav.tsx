@@ -3,9 +3,10 @@
 import React, { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Kanban, LayoutGrid, Bot, Settings, ChevronRight, PlusCircle, LogOut, ShieldAlert } from "lucide-react"
+import { Kanban, LayoutGrid, Bot, Settings, ChevronRight, PlusCircle, LogOut, ShieldAlert, Menu, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { signOut } from "@/app/actions/auth"
+import { motion, AnimatePresence } from "framer-motion"
 
 const navItems = [
     { title: "Dashboard", href: "/", icon: LayoutGrid },
@@ -15,16 +16,43 @@ const navItems = [
 export function SidebarNav({ userRole }: { userRole?: string | null }) {
     const pathname = usePathname()
     const [isExpanded, setIsExpanded] = useState(false)
+    const [isMobileOpen, setIsMobileOpen] = useState(false)
 
     return (
-        <aside 
-            onMouseEnter={() => setIsExpanded(true)}
-            onMouseLeave={() => setIsExpanded(false)}
-            className={cn(
-                "fixed left-0 top-0 h-screen z-[100] bg-carbon border-r border-white/5 transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden",
-                isExpanded ? "w-64 shadow-[20px_0_50px_rgba(0,0,0,0.5)]" : "w-16"
-            )}
-        >
+        <>
+            {/* Mobile Toggle Button */}
+            <button
+                onClick={() => setIsMobileOpen(!isMobileOpen)}
+                className="fixed top-4 right-4 z-[110] md:hidden p-3 glass sharp-edge text-white"
+            >
+                {isMobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
+
+            {/* Mobile Overlay */}
+            <AnimatePresence>
+                {isMobileOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={() => setIsMobileOpen(false)}
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] md:hidden"
+                    />
+                )}
+            </AnimatePresence>
+
+            <aside 
+                onMouseEnter={() => !isMobileOpen && setIsExpanded(true)}
+                onMouseLeave={() => !isMobileOpen && setIsExpanded(false)}
+                className={cn(
+                    "fixed left-0 top-0 h-screen z-[100] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] overflow-hidden",
+                    "glass border-r border-white/5",
+                    isExpanded ? "w-64 shadow-[20px_0_50px_rgba(0,0,0,0.5)]" : "w-16",
+                    // Mobile adjustments
+                    "md:translate-x-0",
+                    isMobileOpen ? "translate-x-0 w-64" : "-translate-x-full md:translate-x-0"
+                )}
+            >
             <div className="flex flex-col h-full py-8">
                 {/* Logo Section */}
                 <Link href="/" className="px-4 mb-16 flex items-center gap-4 group/logo">
@@ -146,5 +174,6 @@ export function SidebarNav({ userRole }: { userRole?: string | null }) {
                 </div>
             </div>
         </aside>
+        </>
     )
 }

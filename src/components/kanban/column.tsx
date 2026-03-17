@@ -115,7 +115,7 @@ export function KanbanColumn({
     }
 
     return (
-        <div ref={setNodeRef} style={style} className="w-80 shrink-0 flex flex-col max-h-full">
+        <div ref={setNodeRef} style={style} className="w-[85vw] md:w-80 shrink-0 flex flex-col max-h-full snap-center glass-card p-2 md:p-3 sharp-edge">
             <div className="flex items-center justify-between mb-4 px-2 group relative">
                 <div className="flex items-center gap-4">
                     <div

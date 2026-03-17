@@ -137,7 +137,9 @@ export function KanbanCard({
                 transition={{ type: "spring", stiffness: 300, damping: 20 }}
                 ref={setNodeRef}
                 style={style}
-                className={`bg-carbon border border-white/5 p-5 sharp-edge shadow-2xl hover:border-neon-green/30 transition-all group relative cursor-grab active:cursor-grabbing hover:shadow-neon-green/5 ${isDeleting ? 'opacity-50 grayscale' : ''}`}
+                {...attributes}
+                {...listeners}
+                className={`bg-carbon border border-white/5 p-5 sharp-edge shadow-2xl hover:border-neon-green/30 transition-all group relative cursor-grab active:cursor-grabbing hover:shadow-neon-green/5 ${isDragging ? 'z-50' : ''} ${isDeleting ? 'opacity-50 grayscale' : ''}`}
             >
                 {/* Botão de Menu */}
                 <div className="absolute top-3 right-3 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -160,9 +162,7 @@ export function KanbanCard({
                         {isDeleting ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
                     </button>
                     <div
-                        {...attributes}
-                        {...listeners}
-                        className="p-1.5 hover:bg-white/5 sharp-edge cursor-grab active:cursor-grabbing"
+                        className="p-1.5 hover:bg-white/5 sharp-edge opacity-50"
                     >
                         <GripVertical className="h-3 w-3 text-slate-600" />
                     </div>

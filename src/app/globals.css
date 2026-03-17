@@ -61,6 +61,11 @@
     --neon-green: 84 100% 59%;
     --carbon: 222 15% 10%;
     --signal-orange: 24 100% 50%;
+    
+    /* UX Pro Max Tokens */
+    --glass-bg: 0 0% 0% / 0.4;
+    --glass-border: 210 40% 98% / 0.05;
+    --glass-blur: 12px;
   }
 }
 
@@ -70,7 +75,25 @@
   }
 
   body {
-    @apply bg-background text-foreground transition-colors duration-500 selection:bg-indigo-500/30 selection:text-white;
+    @apply bg-background text-foreground transition-colors duration-500 selection:bg-neon-green/30 selection:text-neon-green;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-black/40 backdrop-blur-[var(--glass-blur)] border border-[hsl(var(--glass-border))];
+  }
+  
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-[var(--glass-blur)] border border-white/10 hover:border-neon-green/20 transition-all duration-300;
+  }
+
+  .neon-glow {
+    text-shadow: 0 0 10px hsla(var(--neon-green), 0.3), 0 0 20px hsla(var(--neon-green), 0.1);
+  }
+
+  .neon-border {
+    box-shadow: 0 0 15px hsla(var(--neon-green), 0.2), inset 0 0 5px hsla(var(--neon-green), 0.1);
   }
 }
 
@@ -80,11 +103,7 @@
   }
 
   .sharp-edge {
-    border-radius: 1px !important;
-  }
-
-  .neon-glow {
-    text-shadow: 0 0 10px hsla(var(--neon-green), 0.5);
+    border-radius: 2px !important;
   }
 
   .stagger-reveal > * {
@@ -107,8 +126,8 @@
 
 /* Custom Scrollbar for Premium Feel */
 ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 3px;
+  height: 3px;
 }
 
 ::-webkit-scrollbar-track {
@@ -116,8 +135,8 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--neon-green) / 0.3);
-  @apply rounded-none hover:bg-neon-green/60 transition-colors;
+  background: hsl(var(--neon-green) / 0.2);
+  @apply rounded-none hover:bg-neon-green/40 transition-colors;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

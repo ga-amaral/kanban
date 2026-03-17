@@ -140,7 +140,7 @@ export async function moveCard(workspaceId: string, cardId: string, columnId: st
                             })
                         }
 
-                        fetch(config.url, {
+                        await fetch(config.url, {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify(payload)

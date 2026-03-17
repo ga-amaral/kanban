@@ -67,3 +67,45 @@ export async function updateUserStatus(userId: string, newStatus: "active" | "bl
         return { error: e.message }
     }
 }
+
+export async function updateUserProfile(userId: string, data: { full_name?: string, role?: string }) {
+    try {
+        const supabase = await checkAdminStatus()
+
+        const { error } = await (supabase.from("profiles") as any)
+            .update(data)
+            .eq("id", userId)
+
+        if (error) return { error: error.message }
+
+        // Also update users_profiles if it exists
+        if (data.full_name) {
+            await (supabase.from("users_profiles") as any)
+                .update({ full_name: data.full_name })
+                .eq("id", userId)
+        }
+
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}
+
+export async function deleteUserAccount(userId: string) {
+    try {
+        const supabase = await checkAdminStatus()
+
+        const { data, error } = await (supabase as any).rpc("delete_user_by_admin", {
+            target_user_id: userId
+        })
+
+        if (error) return { error: error.message }
+        if (data?.error) return { error: data.error }
+
+        revalidatePath("/admin")
+        return { success: true }
+    } catch (e: any) {
+        return { error: e.message }
+    }
+}

@@ -92,6 +92,31 @@ export default function LoginPage() {
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-5">
+                        <AnimatePresence>
+                            {mode === "register" && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    className="space-y-2 overflow-hidden"
+                                >
+                                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
+                                        Nome Completo
+                                    </label>
+                                    <div className="relative group/field">
+                                        <UserPlus className="absolute left-5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 group-focus-within/field:text-neon-green transition-colors" />
+                                        <input
+                                            name="fullName"
+                                            type="text"
+                                            required={mode === "register"}
+                                            placeholder="GABRIEL AMARAL"
+                                            className="w-full bg-black/40 border border-white/5 text-white pl-14 pr-6 py-5 sharp-edge focus:outline-none focus:border-neon-green/50 transition-all placeholder:text-slate-700 font-black text-xs uppercase tracking-widest"
+                                        />
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] ml-1">
                                 Endereço de E-mail
