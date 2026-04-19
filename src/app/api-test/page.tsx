@@ -70,9 +70,15 @@ export default function ApiTestPage() {
     const [endpoint, setEndpoint] = useState<Endpoint | null>(null)
     const [params, setParams] = useState<Record<string, string>>({})
     const [body, setBody] = useState<Record<string, string>>({})
-    const [baseUrl, setBaseUrl] = useState("http://localhost:3000")
+    const [baseUrl, setBaseUrl] = useState("")
     const [loading, setLoading] = useState(false)
     const [response, setResponse] = useState<{ status: number; data: any } | null>(null)
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setBaseUrl(window.location.origin)
+        }
+    }, [])
 
     const generateCurl = () => {
         if (!endpoint || !baseUrl) return ""
