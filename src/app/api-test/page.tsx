@@ -70,7 +70,7 @@ export default function ApiTestPage() {
     const [endpoint, setEndpoint] = useState<Endpoint | null>(null)
     const [params, setParams] = useState<Record<string, string>>({})
     const [body, setBody] = useState<Record<string, string>>({})
-    const [baseUrl, setBaseUrl] = useState("")
+    const [baseUrl, setBaseUrl] = useState(process.env.NEXT_PUBLIC_SITE_URL || "")
     const [loading, setLoading] = useState(false)
     const [response, setResponse] = useState<{ status: number; data: any } | null>(null)
 
@@ -205,7 +205,7 @@ export default function ApiTestPage() {
                             value={baseUrl}
                             onChange={(e) => setBaseUrl(e.target.value)}
                             className="bg-black/40 border border-white/5 text-xs p-2 sharp-edge text-white focus:outline-none focus:border-neon-green/50 w-60"
-                            placeholder="http://localhost:3000"
+                            placeholder="https://seu-dominio.com"
                         />
                     </div>
                 </div>
