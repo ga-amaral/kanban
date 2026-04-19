@@ -3,8 +3,9 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
+// Lista automações de um workspace
 export async function getAutomations(workspaceId: string) {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { data, error } = await supabase
         .from("automations")
         .select("*")
@@ -15,17 +16,18 @@ export async function getAutomations(workspaceId: string) {
     return data
 }
 
-export async function createAutomation(workspaceId: string, name: string, trigger: any, action: any) {
-    const supabase = createClient() as any
+// Cria uma nova automação
+export async function createAutomation(workspaceId: string, name: string, trigger: Record<string, unknown>, action: Record<string, unknown>) {
+    const supabase = createClient()
     const { data, error } = await supabase
         .from("automations")
-        .insert([{
+        .insert({
             workspace_id: workspaceId,
             name,
             trigger_config: trigger,
             action_config: action,
             is_active: true
-        }])
+        })
         .select()
         .single()
 
@@ -34,8 +36,9 @@ export async function createAutomation(workspaceId: string, name: string, trigge
     return { data }
 }
 
+// Deleta uma automação
 export async function deleteAutomation(workspaceId: string, id: string) {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { error } = await supabase
         .from("automations")
         .delete()
@@ -46,8 +49,9 @@ export async function deleteAutomation(workspaceId: string, id: string) {
     return { success: true }
 }
 
+// Ativa/desativa uma automação
 export async function toggleAutomation(workspaceId: string, id: string, isActive: boolean) {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { error } = await supabase
         .from("automations")
         .update({ is_active: isActive })
@@ -58,8 +62,9 @@ export async function toggleAutomation(workspaceId: string, id: string, isActive
     return { success: true }
 }
 
-export async function updateAutomation(workspaceId: string, id: string, name: string, trigger: any, action: any) {
-    const supabase = createClient() as any
+// Atualiza uma automação existente
+export async function updateAutomation(workspaceId: string, id: string, name: string, trigger: Record<string, unknown>, action: Record<string, unknown>) {
+    const supabase = createClient()
     const { data, error } = await supabase
         .from("automations")
         .update({

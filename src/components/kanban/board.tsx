@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useCallback } from "react"
 import {
     DndContext,
     DragOverlay,
@@ -53,34 +53,34 @@ export function KanbanBoard({
     )
 
     // --- Callbacks de Estado ---
-    const handleCardCreate = (newCard: any) => {
+    const handleCardCreate = useCallback((newCard: any) => {
         setCards(prev => [newCard, ...prev])
-    }
+    }, [])
 
-    const handleBulkCreate = (newCards: any[]) => {
+    const handleBulkCreate = useCallback((newCards: any[]) => {
         setCards(prev => [...newCards, ...prev])
         setImportingTo(null)
-    }
+    }, [])
 
-    const handleCardUpdate = (updatedCard: any) => {
+    const handleCardUpdate = useCallback((updatedCard: any) => {
         setCards(prev => prev.map(c => c.id === updatedCard.id ? updatedCard : c))
-    }
+    }, [])
 
-    const handleBulkUpdate = (updatedCards: any[]) => {
+    const handleBulkUpdate = useCallback((updatedCards: any[]) => {
         setCards(prev => {
             const updatedIds = new Set(updatedCards.map(c => c.id))
             return [...updatedCards, ...prev.filter(c => !updatedIds.has(c.id))]
         })
-    }
+    }, [])
 
-    const handleCardDelete = (cardId: string) => {
+    const handleCardDelete = useCallback((cardId: string) => {
         setCards(prev => prev.filter(c => c.id !== cardId))
-    }
+    }, [])
 
-    const handleBulkDelete = (cardIds: string[]) => {
+    const handleBulkDelete = useCallback((cardIds: string[]) => {
         const idsToRemove = new Set(cardIds)
         setCards(prev => prev.filter(c => !idsToRemove.has(c.id)))
-    }
+    }, [])
 
     // --- Handlers de Ações ---
     const handleRefresh = async () => {
@@ -110,20 +110,17 @@ export function KanbanBoard({
         }
     }
 
-    const handleColumnUpdate = async (columnId: string, data: any) => {
-        // Optimistic update
+    const handleColumnUpdate = useCallback(async (columnId: string, data: any) => {
         setColumns(prev => prev.map(c => c.id === columnId ? { ...c, ...data } : c))
 
         try {
             await updateColumn(workspaceId, columnId, data)
         } catch (error) {
             toast.error("Erro ao atualizar coluna.")
-            // Rollback could be added here
         }
-    }
+    }, [workspaceId])
 
-    const handleColumnDelete = async (columnId: string) => {
-        // Optimistic update
+    const handleColumnDelete = useCallback(async (columnId: string) => {
         setColumns(prev => prev.filter(c => c.id !== columnId))
         setCards(prev => prev.filter(c => c.column_id !== columnId))
 
@@ -132,9 +129,8 @@ export function KanbanBoard({
             toast.success("Coluna excluída!")
         } catch (error) {
             toast.error("Erro ao excluir coluna.")
-            // Rollback could be added here
         }
-    }
+    }, [workspaceId])
 
     // --- Handlers de Drag & Drop ---
     const handleDragStart = (event: DragStartEvent) => {
@@ -179,7 +175,7 @@ export function KanbanBoard({
         }
     }
 
-    const handleDragEnd = async (event: DragEndEvent) => {
+    const handleDragEnd = useCallback(async (event: DragEndEvent) => {
         setActiveCard(null)
         setActiveColumn(null)
         const { active, over } = event
@@ -189,18 +185,15 @@ export function KanbanBoard({
             const activeId = active.id
             const overId = over.id
             if (activeId !== overId) {
-                setColumns(prev => {
-                    const activeIndex = prev.findIndex(c => c.id === activeId)
-                    const overIndex = prev.findIndex(c => c.id === overId)
-                    const newColumns = arrayMove(prev, activeIndex, overIndex)
+                const activeIndex = columns.findIndex(c => c.id === activeId)
+                const overIndex = columns.findIndex(c => c.id === overId)
+                const newColumns = arrayMove(columns, activeIndex, overIndex)
 
-                    // Atualiza backend com a nova ordem
-                    const orderPayload = newColumns.map((col, index) => ({ id: col.id, order: index }))
-                    updateColumnOrder(workspaceId, orderPayload).catch(() => {
-                        toast.error("Erro ao atualizar ordem das colunas")
-                    })
+                setColumns(newColumns)
 
-                    return newColumns
+                const orderPayload = newColumns.map((col, index) => ({ id: col.id, order: index }))
+                updateColumnOrder(workspaceId, orderPayload).catch(() => {
+                    toast.error("Erro ao atualizar ordem das colunas")
                 })
             }
             return
@@ -215,7 +208,7 @@ export function KanbanBoard({
                 toast.error("Erro ao sincronizar posição.")
             }
         }
-    }
+    }, [columns, cards, workspaceId])
 
     const globalCustomFields = useMemo(() => {
         const keys = new Set<string>()
@@ -357,18 +350,14 @@ export function KanbanBoard({
                                 </div>
                             ) : null}
                             {activeColumn ? (
-                                <div className="scale-105 rotate-2">
-                                    <KanbanColumn
-                                        column={activeColumn}
-                                        cards={cards.filter(c => c.column_id === activeColumn.id)}
-                                        workspaceId={workspaceId}
-                                        globalCustomFields={globalCustomFields}
-                                        onCardCreate={handleCardCreate}
-                                        onCardUpdate={handleCardUpdate}
-                                        onCardDelete={handleCardDelete}
-                                        onColumnUpdate={handleColumnUpdate}
-                                        onColumnDelete={handleColumnDelete}
-                                    />
+                                <div className="w-80 shrink-0 bg-carbon border border-neon-green/30 p-3 sharp-edge opacity-80">
+                                    <div className="flex items-center gap-2">
+                                        <div
+                                            className="w-2.5 h-2.5 sharp-edge"
+                                            style={{ backgroundColor: activeColumn.color || "#6366f1" }}
+                                        />
+                                        <h2 className="text-xs font-black text-white uppercase">{activeColumn.title}</h2>
+                                    </div>
                                 </div>
                             ) : null}
                         </DragOverlay>

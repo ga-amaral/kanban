@@ -1,21 +1,17 @@
 "use server"
 
-import { createClient } from "@/lib/supabase/server"
-
-export async function logError(context: string, error: any) {
-    const supabase = createClient()
+// Log de erros centralizado para debugging
+export async function logError(context: string, error: unknown) {
+    const err = error instanceof Error ? error : { message: String(error), stack: undefined }
 
     const logEntry = {
         context,
-        message: error.message || String(error),
-        stack: error.stack,
+        message: err.message,
+        stack: err.stack,
         timestamp: new Date().toISOString(),
     }
 
     console.error(`[LOG ERROR][${context}]:`, logEntry)
-
-    // Opcional: Salvar em uma tabela de logs se necessário
-    // await supabase.from('system_logs').insert([logEntry])
 
     return logEntry
 }

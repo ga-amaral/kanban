@@ -3,7 +3,8 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
-export async function testWebhook(url: string, payload: any) {
+// Testa um webhook com payload customizado
+export async function testWebhook(url: string, payload: Record<string, unknown>) {
     try {
         const response = await fetch(url, {
             method: "POST",
@@ -17,18 +18,8 @@ export async function testWebhook(url: string, payload: any) {
         const data = await response.text()
 
         return { success: response.ok, status, data }
-    } catch (error: any) {
-        return { success: false, error: error.message }
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error)
+        return { success: false, error: message }
     }
-}
-
-export async function saveWebhookMapping(workspaceId: string, mapping: any) {
-    const supabase = createClient()
-    const { error } = await (supabase.from("workspaces") as any)
-        .update({ webhook_config: mapping })
-        .eq("id", workspaceId)
-
-    if (error) return { error: error.message }
-    revalidatePath(`/workspace/${workspaceId}`)
-    return { success: true }
 }

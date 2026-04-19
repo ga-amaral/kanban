@@ -14,6 +14,10 @@ export const metadata: Metadata = {
     description: "Multi-workspace CRM com Kanban customizável, webhooks estilo n8n e automações poderosas. Desenvolvido por Gabriel Amaral.",
     keywords: ["CRM", "Kanban", "n8n", "Automação", "Vibe Coding", "Next.js", "Supabase"],
     authors: [{ name: "Gabriel Amaral", url: "https://instagram.com/sougabrielamaral" }],
+    icons: {
+        icon: "/favicon.png",
+        apple: "/favicon.png",
+    },
 };
 
 export default async function RootLayout({
@@ -40,7 +44,6 @@ export default async function RootLayout({
                             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                                 <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-neon-green/5 blur-[120px] rounded-full" />
                                 <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-indigo-500/5 blur-[120px] rounded-full" />
-                                <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 contrast-150 brightness-100 mix-blend-overlay" />
                             </div>
                             
                             <div className="relative z-10 w-full">

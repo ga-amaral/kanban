@@ -3,13 +3,15 @@
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 
+// Verifica se o usuário logado é admin
 async function checkAdminStatus() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) throw new Error("Não autenticado")
 
-    const { data: profile } = await (supabase.from("profiles") as any)
+    const { data: profile } = await supabase
+        .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single()
@@ -21,91 +23,86 @@ async function checkAdminStatus() {
     return supabase
 }
 
+// Lista todos os usuários (admin only)
 export async function getUsers() {
     try {
         const supabase = await checkAdminStatus()
 
-        const { data, error } = await (supabase.from("profiles") as any)
+        const { data, error } = await supabase
+            .from("profiles")
             .select("*")
             .order("updated_at", { ascending: false })
 
         if (error) return { error: error.message }
         return { data }
-    } catch (e: any) {
-        return { error: e.message }
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : String(e)
+        return { error: message }
     }
 }
 
+// Atualiza status de um usuário (bloquear/desbloquear)
 export async function updateUserStatus(userId: string, newStatus: "active" | "blocked") {
     try {
         const supabase = await checkAdminStatus()
 
-        // Impede que admin bloqueie a si mesmo
         const { data: { user } } = await supabase.auth.getUser()
         if (user?.id === userId) {
             return { error: "Você não pode alterar seu próprio status." }
         }
 
-        const { data: targetProfile } = await (supabase.from("profiles") as any)
-            .select("email")
-            .eq("id", userId)
-            .single()
-
-        if (targetProfile?.email === "amaralgabriel123@gmail.com" || targetProfile?.email === "amaralgabriel4321@gmail.com") {
-            return { error: "Este usuário de sistema é protegido e não pode ser alterado." }
-        }
-
-        const { error } = await (supabase.from("profiles") as any)
-            .update({ status: newStatus })
+        // Atualiza usando o campo 'status' e 'active' para compatibilidade
+        const isActive = newStatus === "active"
+        const { error } = await supabase
+            .from("profiles")
+            .update({ status: newStatus, active: isActive })
             .eq("id", userId)
 
         if (error) return { error: error.message }
 
         revalidatePath("/admin")
         return { success: true }
-    } catch (e: any) {
-        return { error: e.message }
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : String(e)
+        return { error: message }
     }
 }
 
+// Atualiza perfil de um usuário (admin only)
 export async function updateUserProfile(userId: string, data: { full_name?: string, role?: string }) {
     try {
         const supabase = await checkAdminStatus()
 
-        const { error } = await (supabase.from("profiles") as any)
+        const { error } = await supabase
+            .from("profiles")
             .update(data)
             .eq("id", userId)
 
         if (error) return { error: error.message }
 
-        // Also update users_profiles if it exists
-        if (data.full_name) {
-            await (supabase.from("users_profiles") as any)
-                .update({ full_name: data.full_name })
-                .eq("id", userId)
-        }
-
         revalidatePath("/admin")
         return { success: true }
-    } catch (e: any) {
-        return { error: e.message }
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : String(e)
+        return { error: message }
     }
 }
 
+// Deleta conta de um usuário (admin only, via RPC)
 export async function deleteUserAccount(userId: string) {
     try {
         const supabase = await checkAdminStatus()
 
-        const { data, error } = await (supabase as any).rpc("delete_user_by_admin", {
+        const { data, error } = await supabase.rpc("delete_user_by_admin", {
             target_user_id: userId
         })
 
         if (error) return { error: error.message }
-        if (data?.error) return { error: data.error }
 
         revalidatePath("/admin")
         return { success: true }
-    } catch (e: any) {
-        return { error: e.message }
+    } catch (e: unknown) {
+        const message = e instanceof Error ? e.message : String(e)
+        return { error: message }
     }
 }

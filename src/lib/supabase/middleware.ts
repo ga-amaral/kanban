@@ -1,20 +1,21 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { Database } from '@/types/database'
+import { SupabaseClient } from '@supabase/supabase-js'
 
+// Middleware de sessão com proteção de rotas e verificação de role/status
 export async function updateSession(request: NextRequest) {
     try {
         let supabaseResponse = NextResponse.next({
             request,
         })
 
-        // Check for missing env vars
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
             console.error('Middleware Error: Missing Supabase environment variables.')
             return supabaseResponse
         }
 
-        const supabase = createServerClient<Database>(
+        const supabase = createServerClient<Database, "public">(
             process.env.NEXT_PUBLIC_SUPABASE_URL,
             process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
             {
@@ -22,8 +23,8 @@ export async function updateSession(request: NextRequest) {
                     getAll() {
                         return request.cookies.getAll()
                     },
-                    setAll(cookiesToSet: { name: string, value: string, options: any }[]) {
-                        cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+                    setAll(cookiesToSet: Array<{ name: string; value: string; options: Record<string, unknown> }>) {
+                        cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
                         supabaseResponse = NextResponse.next({
                             request,
                         })
@@ -33,7 +34,7 @@ export async function updateSession(request: NextRequest) {
                     },
                 },
             }
-        )
+        ) as unknown as SupabaseClient<Database, "public", any>
 
         // Proteger rotas
         const {
@@ -52,14 +53,15 @@ export async function updateSession(request: NextRequest) {
 
         // Se logado, checar role e status
         if (user) {
-            // Pegar profile
-            const { data: profile } = await (supabase.from('profiles') as any)
-                .select('role, status')
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role, status, active')
                 .eq('id', user.id)
                 .single()
 
-            // Bloquear usuário
-            if (profile?.status === 'blocked' && !request.nextUrl.pathname.startsWith('/blocked')) {
+            // Bloquear usuário (checar tanto 'status' quanto 'active')
+            const isBlocked = profile?.status === 'blocked' || profile?.active === false
+            if (isBlocked && !request.nextUrl.pathname.startsWith('/blocked')) {
                 const url = request.nextUrl.clone()
                 url.pathname = '/blocked'
                 return NextResponse.redirect(url)
@@ -80,7 +82,7 @@ export async function updateSession(request: NextRequest) {
             }
 
             // Redirecionar para inicio se estiver em /blocked mas não for blocked
-            if (request.nextUrl.pathname.startsWith('/blocked') && profile?.status !== 'blocked') {
+            if (request.nextUrl.pathname.startsWith('/blocked') && !isBlocked) {
                 const url = request.nextUrl.clone()
                 url.pathname = '/'
                 return NextResponse.redirect(url)
@@ -89,7 +91,6 @@ export async function updateSession(request: NextRequest) {
 
         return supabaseResponse
     } catch (e) {
-        // Prevent middleware from crashing the whole app
         console.error('Middleware Error:', e)
         return NextResponse.next({
             request: {

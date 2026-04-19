@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
+// Login com email e senha
 export async function signIn(formData: FormData) {
     const email = formData.get("email") as string
     const password = formData.get("password") as string
@@ -22,6 +23,7 @@ export async function signIn(formData: FormData) {
     redirect("/")
 }
 
+// Cadastro com email e senha
 export async function signUp(formData: FormData) {
     const email = formData.get("email") as string
     const password = formData.get("password") as string
@@ -35,7 +37,7 @@ export async function signUp(formData: FormData) {
             emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
             data: {
                 full_name: fullName,
-                role: 'user'
+                role: 'usuario'
             }
         }
     })
@@ -47,6 +49,7 @@ export async function signUp(formData: FormData) {
     return { success: "Verifique seu e-mail para confirmar o cadastro!" }
 }
 
+// Logout
 export async function signOut() {
     const supabase = createClient()
     await supabase.auth.signOut()
@@ -54,16 +57,18 @@ export async function signOut() {
     redirect("/login")
 }
 
+// Obtém role do usuário logado
 export async function getCurrentUserRole() {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
     
     if (!user) return null
 
-    const { data: profile } = await (supabase.from("profiles") as any)
+    const { data: profile } = await supabase
+        .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single()
 
-    return profile?.role || "user"
+    return profile?.role || "usuario"
 }

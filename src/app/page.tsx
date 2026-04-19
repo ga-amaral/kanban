@@ -3,16 +3,17 @@ import { getWorkspaces } from "@/app/actions/workspace"
 import { UserNav } from "@/components/user-nav"
 import { CreateWorkspace } from "@/components/create-workspace"
 import Link from "next/link"
-import { LayoutGrid, ArrowRight, Kanban, Settings, Bot } from "lucide-react"
+import { LayoutGrid, ArrowRight, Kanban, Settings, Bot, Terminal } from "lucide-react"
+import type { Tables } from "@/types/database"
 
 /**
  * Gabriel Amaral (https://instagram.com/sougabrielamaral)
  */
 
 export default async function DashboardPage() {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    const workspaces: any[] = await getWorkspaces()
+    const workspaces = await getWorkspaces() as Tables<"workspaces">[]
 
     return (
         <div className="min-h-screen bg-transparent text-white font-inter selection:bg-neon-green/30">
@@ -33,7 +34,7 @@ export default async function DashboardPage() {
                         </div>
 
                         <div className="grid sm:grid-cols-2 gap-4 stagger-reveal">
-                            {workspaces.map((workspace: any) => (
+                            {workspaces.map((workspace) => (
                                 <Link
                                     key={workspace.id}
                                     href={`/workspace/${workspace.id}`}
@@ -98,6 +99,27 @@ export default async function DashboardPage() {
                             </div>
                             <p className="text-slate-500 text-xs leading-relaxed font-medium">
                                 Personalize e gerencie seus próprios agentes de inteligência artificial para o seu negócio.
+                            </p>
+                            <div className="flex items-center gap-2 text-neon-green text-[10px] font-black uppercase tracking-[0.2em] pt-2">
+                                Acessar Área <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
+                            </div>
+                        </Link>
+
+                        <Link 
+                            href="/api-test"
+                            className="block bg-carbon border border-white/5 p-7 sharp-edge space-y-4 hover:border-neon-green/50 transition-all relative overflow-hidden group animate-spring"
+                        >
+                            <div className="absolute -right-8 -bottom-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                                <Terminal className="h-32 w-32 text-white" />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <div className="bg-neon-green/10 p-2 sharp-edge">
+                                    <Terminal className="h-5 w-5 text-neon-green" />
+                                </div>
+                                <h3 className="text-sm font-black text-white uppercase tracking-[0.2em]">Teste de API</h3>
+                            </div>
+                            <p className="text-slate-500 text-xs leading-relaxed font-medium">
+                                Teste as ações da API e gere comandos cURL para integração externa.
                             </p>
                             <div className="flex items-center gap-2 text-neon-green text-[10px] font-black uppercase tracking-[0.2em] pt-2">
                                 Acessar Área <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />

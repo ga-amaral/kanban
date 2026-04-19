@@ -13,7 +13,8 @@ export default async function AdminPage() {
     if (!user) redirect("/login")
 
     // Double check on page side just in case middleware fails
-    const { data: profile } = await (supabase.from("profiles") as any)
+    const { data: profile } = await supabase
+        .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single()
@@ -65,7 +66,7 @@ export default async function AdminPage() {
                                 Erro ao carregar usuários: {error}
                             </div>
                         ) : (
-                            <AdminUserList users={users} currentUserId={user.id} />
+                            <AdminUserList users={users || []} currentUserId={user.id} />
                         )}
                     </div>
                 </div>

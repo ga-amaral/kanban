@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { saveWebhookMapping, testWebhook } from "@/app/actions/webhook"
+import { testWebhook } from "@/app/actions/webhook"
 import { Link, Terminal, Play, Save, Loader2, Info, X } from "lucide-react"
 import { toast, Toaster } from "sonner"
 import { motion, AnimatePresence } from "framer-motion"
@@ -12,19 +12,10 @@ export function WebhookBuilder({ workspaceId, initialConfig }: { workspaceId: st
     const [loading, setLoading] = useState(false)
     const [testResult, setTestResult] = useState<any>(null)
 
-    const internalFields = ["contact_name", "contact_phone", "due_date", "column_title"]
+    const internalFields = ["client_name", "phone", "deadline_date", "column_title"]
 
     const handleSave = async () => {
-        setLoading(true)
-        try {
-            const result = await saveWebhookMapping(workspaceId, { url, mappings })
-            if (result.error) throw new Error(result.error)
-            toast.success("Configuração salva com sucesso!")
-        } catch (error: any) {
-            toast.error("Erro ao salvar: " + error.message)
-        } finally {
-            setLoading(false)
-        }
+        toast.info("Use o gerenciador de automações para configurar webhooks.")
     }
 
     const handleTest = async () => {

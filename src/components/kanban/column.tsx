@@ -78,13 +78,13 @@ export function KanbanColumn({
             })
 
             const cardData = {
-                contact_name: formData.get("name"),
-                contact_phone: formData.get("phone"),
-                due_date: formData.get("due_date"),
-                custom_data: customData
+                client_name: formData.get("name") as string,
+                phone: formData.get("phone") as string,
+                deadline_date: formData.get("due_date") as string || null,
+                custom_data_jsonb: customData
             }
 
-            const result = await createCard(workspaceId, column.id, cardData)
+            const result = await createCard(workspaceId, column.id, cardData) as { data?: any; error?: string }
             
             if (result?.error) {
                 toast.error(`Erro ao criar card: ${result.error}`)

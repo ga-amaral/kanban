@@ -12,8 +12,9 @@ const workspaceSchema = z.object({
     name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres"),
 })
 
+// Cria um novo workspace
 export async function createWorkspace(formData: FormData) {
-    const supabase = createClient() as any
+    const supabase = createClient()
 
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) throw new Error("Não autorizado")
@@ -27,7 +28,7 @@ export async function createWorkspace(formData: FormData) {
 
     const { data, error } = await supabase
         .from("workspaces")
-        .insert([{ name, owner_id: user.id }])
+        .insert({ name, owner_id: user.id })
         .select()
         .single()
 
@@ -37,8 +38,9 @@ export async function createWorkspace(formData: FormData) {
     return { data }
 }
 
+// Lista workspaces do usuário logado
 export async function getWorkspaces() {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) return []
@@ -53,10 +55,10 @@ export async function getWorkspaces() {
     return data
 }
 
+// Lista workspaces de um usuário (admin only)
 export async function getUserWorkspaces(userId: string) {
-    const supabase = createClient() as any
+    const supabase = createClient()
 
-    // Check if caller is admin
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return []
 
@@ -78,8 +80,9 @@ export async function getUserWorkspaces(userId: string) {
     return data
 }
 
+// Atualiza nome de um workspace
 export async function updateWorkspace(id: string, name: string) {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { error } = await supabase
         .from("workspaces")
         .update({ name })
@@ -90,8 +93,9 @@ export async function updateWorkspace(id: string, name: string) {
     return { success: true }
 }
 
+// Deleta um workspace
 export async function deleteWorkspace(id: string) {
-    const supabase = createClient() as any
+    const supabase = createClient()
     const { error } = await supabase
         .from("workspaces")
         .delete()
@@ -102,6 +106,7 @@ export async function deleteWorkspace(id: string) {
     return { success: true }
 }
 
+// Revalida cache do workspace
 export async function refreshWorkspace(id: string) {
     revalidatePath(`/workspace/${id}`)
     revalidatePath("/")
