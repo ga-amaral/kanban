@@ -142,10 +142,16 @@ export function ListView({
                                             <span className="text-sm font-bold text-white font-outfit">{card.client_name || card.contact_name || "Sem Nome"}</span>
                                         </div>
                                     </td>
-                                    <td className="p-5">
+<td className="p-5">
                                         <div className="flex items-center gap-2 text-slate-400 text-xs">
                                             <Phone className="h-3 w-3" />
                                             {card.phone || card.contact_phone}
+                                        </div>
+                                    </td>
+                                    <td className="p-5">
+                                        <div className="inline-flex items-center gap-1.5 bg-slate-800/50 border border-slate-700 px-3 py-1 rounded-full text-[10px] text-slate-300 font-medium capitalize">
+                                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: column?.color || '#6366f1' }} />
+                                            {column?.title || "S/ Coluna"}
                                         </div>
                                     </td>
                                     <td className="p-5">
