@@ -4,7 +4,9 @@
       "Bash(npm test:*)",
       "Bash(npx tsc:*)",
       "Bash(grep -E \"\\\\.\\(md|txt|json\\)$\")",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "mcp__claude_ai_Supabase__list_projects",
+      "mcp__claude_ai_Supabase__apply_migration"
     ]
   }
 }
