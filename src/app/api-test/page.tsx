@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { Copy, Play, Database, User, CreditCard, Folder, Bot, Link2, Settings, Loader2 } from "lucide-react"
 

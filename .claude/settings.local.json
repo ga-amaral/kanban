@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm test:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(grep -E \"\\\\.\\(md|txt|json\\)$\")",
+      "Bash(npm run:*)"
     ]
   }
 }
