@@ -29,8 +29,8 @@ export function ListView({
     const [showBulkMove, setShowBulkMove] = useState(false)
 
     const filteredCards = cards.filter(c =>
-        (c.contact_name || "").toLowerCase().includes((search || "").toLowerCase()) ||
-        (c.contact_phone || "").includes(search)
+        (c.client_name || c.contact_name || "").toLowerCase().includes((search || "").toLowerCase()) ||
+        (c.phone || c.contact_phone || "").includes(search)
     )
 
     const toggleSelect = (id: string) => {
@@ -135,29 +135,23 @@ export function ListView({
                                         </button>
                                     </td>
                                     <td className="p-5">
-                                        <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
                                             <div className="w-8 h-8 bg-slate-800 rounded-xl flex items-center justify-center font-bold text-slate-400 text-xs text-center">
-                                                {(card.contact_name || "C")[0]}
+                                                {(card.client_name || card.contact_name || "C")[0]}
                                             </div>
-                                            <span className="text-sm font-bold text-white font-outfit">{card.contact_name || "Sem Nome"}</span>
+                                            <span className="text-sm font-bold text-white font-outfit">{card.client_name || card.contact_name || "Sem Nome"}</span>
                                         </div>
                                     </td>
                                     <td className="p-5">
                                         <div className="flex items-center gap-2 text-slate-400 text-xs">
                                             <Phone className="h-3 w-3" />
-                                            {card.contact_phone}
-                                        </div>
-                                    </td>
-                                    <td className="p-5">
-                                        <div className="inline-flex items-center gap-1.5 bg-slate-800/50 border border-slate-700 px-3 py-1 rounded-full text-[10px] text-slate-300 font-medium capitalize">
-                                            <div className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
-                                            {column?.title || "S/ Coluna"}
+                                            {card.phone || card.contact_phone}
                                         </div>
                                     </td>
                                     <td className="p-5">
                                         <div className="flex items-center gap-2 text-slate-400 text-xs">
                                             <Calendar className="h-3 w-3" />
-                                            {card.due_date ? new Date(card.due_date).toLocaleDateString() : "-"}
+                                            {card.deadline_date || card.due_date ? new Date(card.deadline_date || card.due_date).toLocaleDateString() : "-"}
                                         </div>
                                     </td>
                                     <td className="p-5">
